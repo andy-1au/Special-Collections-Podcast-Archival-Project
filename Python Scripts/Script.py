@@ -26,11 +26,3 @@ for child in root.findall('./channel/item/'):
    
 
 
-
-# for child in root: 
-#     tag = child.tag
-#     print(tag)
-#     if tag == 'enclosure url':
-#         print(child.text)
-    
-
