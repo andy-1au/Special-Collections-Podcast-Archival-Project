@@ -7,8 +7,8 @@ import os
 #xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
 #csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
 
-xmlPath = 'insert path here'
-csvPath = 'insert path here'
+#xmlPath = '/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/XML'
+#csvPath = 'insert path here'
 
 #for loop to iterate through xml files in xmlPath
 for fileName in os.listdir(xmlPath):
