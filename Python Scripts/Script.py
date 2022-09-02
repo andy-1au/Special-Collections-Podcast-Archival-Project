@@ -4,11 +4,13 @@ import csv
 import requests
 import os
 
-xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
-csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
+#NOTE: when commiting to main branch, comment out users' specific paths
 
-# xmlPath = 'insert path here'
-# csvPath = 'insert path here'
+# xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
+# csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
+
+xmlPath = 'insert path here'
+csvPath = 'insert path here'
 
 #for loop to iterate through xml files in xmlPath
 for fileName in os.listdir(xmlPath):
@@ -19,8 +21,8 @@ for fileName in os.listdir(xmlPath):
 tree = XET.parse(xmlFilePath)
 root = tree.getroot()
 
-# podcastFolderPath = 'insert path here'
-podcastFolderPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/Podcasts'
+podcastFolderPath = 'insert path here'
+# podcastFolderPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/Podcasts'
 
 for child in root.findall('./channel/item/'):
     tag = child.tag
