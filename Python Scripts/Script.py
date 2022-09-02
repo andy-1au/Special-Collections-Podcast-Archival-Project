@@ -4,11 +4,11 @@ import csv
 import requests
 import os
 
-#xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
-#csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
+xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
+csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
 
-xmlPath = 'insert path here'
-csvPath = 'insert path here'
+# xmlPath = 'insert path here'
+# csvPath = 'insert path here'
 
 #for loop to iterate through xml files in xmlPath
 for fileName in os.listdir(xmlPath):
@@ -19,10 +19,24 @@ for fileName in os.listdir(xmlPath):
 tree = XET.parse(xmlFilePath)
 root = tree.getroot()
 
+# podcastFolderPath = 'insert path here'
+podcastFolderPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/Podcasts'
+
 for child in root.findall('./channel/item/'):
     tag = child.tag
     if tag == 'enclosure':
-         print(child.attrib.get('url'))
+        url = child.attrib.get('url')
+        if url.find('./'):
+            fileName = url.rsplit('/', 1)[1]
+            filePath = os.path.join(podcastFolderPath, fileName)
+        download = requests.get(url, allow_redirects=True)
+        print(url + " has been downloaded")
+        open(filePath, 'wb').write(download.content)
+        
+
+
+         
+        
    
 
 
