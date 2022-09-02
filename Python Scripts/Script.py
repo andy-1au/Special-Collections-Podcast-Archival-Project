@@ -4,6 +4,9 @@ import csv
 import requests
 import os
 
+#xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
+#csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
+
 xmlPath = 'insert path here'
 csvPath = 'insert path here'
 
