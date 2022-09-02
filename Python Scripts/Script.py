@@ -1,12 +1,10 @@
 import xml.etree.ElementTree as XET
-import pandas as pd 
-import csv
+# import pandas as pd 
+# import csv
 import requests
 import os
 
-print('test')
-
-xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
+xmlPath = '/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/XML'
 csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
 
 for fileName in os.listdir(xmlPath):
@@ -19,7 +17,8 @@ root = tree.getroot()
 
 for child in root.findall('./channel/item/'):
     tag = child.tag
-    print(tag)
+    if tag == 'enclosure':
+       url = child.attrib.get('url')
 
 
 # for child in root: 
