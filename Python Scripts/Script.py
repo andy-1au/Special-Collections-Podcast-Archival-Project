@@ -9,8 +9,8 @@ import os
 # xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
 # csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
 
-xmlPath = 'insert path here'
-csvPath = 'insert path here'
+xmlPath = 'insert your path here' #XML Folder
+csvPath = 'insert your path here' #CSV Folder
 
 #for loop to iterate through xml files in xmlPath
 for fileName in os.listdir(xmlPath):
@@ -21,19 +21,22 @@ for fileName in os.listdir(xmlPath):
 tree = XET.parse(xmlFilePath)
 root = tree.getroot()
 
-podcastFolderPath = 'insert path here'
 # podcastFolderPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/Podcasts'
 
-for child in root.findall('./channel/item/'):
+podcastFolderPath = 'insert your path here'
+
+
+#Script for downloading podcasts(mp3) using rss feed(xml) tags
+for child in root.findall('./channel/item/'): #finds all tags in xml file under the item tag
     tag = child.tag
     if tag == 'enclosure':
         url = child.attrib.get('url')
-        if url.find('./'):
-            fileName = url.rsplit('/', 1)[1]
-            filePath = os.path.join(podcastFolderPath, fileName)
-        download = requests.get(url, allow_redirects=True)
-        print(url + " has been downloaded")
-        open(filePath, 'wb').write(download.content)
+        if url.find('/'): #finds the last '/' in the url
+            fileName = url.rsplit('/', 1)[1] #gets the file name from the url
+            filePath = os.path.join(podcastFolderPath, fileName) #creates a path for the file to be saved
+        download = requests.get(url, allow_redirects=True) #downloads the file
+        print(url + " has been downloaded") 
+        open(filePath, 'wb').write(download.content) #writes the file to the path
         
 
 
