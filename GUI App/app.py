@@ -2,7 +2,7 @@ import tkinter as tk #for GUI
 from tkinter import filedialog, Text #pick the apps 
 import os 
 
-root = tk.Tk() 
+root = tk.Tk() # holds the entire app
 
 # xmlPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/XML'
 # csvPath = 'C:/Users/andyr/Desktop/Special-Collections-Podcast-GUI-Project/CSV'
@@ -40,6 +40,11 @@ def RSS_Feed():
     xmlPathLabel.pack()
     print(xmlPath)
 
+
+def removePlaceholder(event):
+    enterRSS.delete(0, "end")
+    return None
+
 # def downloadPodcast():
 #     print("Downloading Podcast")
 #     for child in root.findall('./channel/item/'): #finds all tags in xml file under the item tag
@@ -62,16 +67,17 @@ frame = tk.Frame(root, bg="white") #create a frame
 frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the middle of the canvas
 
 # button for selecting the rss feed
-chooseRSS = tk.Button(root, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=RSS_Feed) 
+chooseRSS = tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=RSS_Feed) 
 chooseRSS.pack() 
 
 # button for selecting the folder to save the podcasts
-choosePodcastFolder = tk.Button(root, text="Select Podcasts Folder", padx=10, pady=5, fg="white", bg="#263D42", command=podcast_Folder) 
+choosePodcastFolder = tk.Button(frame, text="Select Podcasts Folder", padx=10, pady=5, fg="white", bg="#263D42", command=podcast_Folder) 
 choosePodcastFolder.pack() 
 
 # make an entry box for rss feed, add a float label in the entry box
-enterRSS = tk.Entry(root, width=50, borderwidth=5)
+enterRSS = tk.Entry(frame, width=50, borderwidth=5)
 enterRSS.insert(0, "Enter RSS Feed")
+enterRSS.bind("<Button-1>", removePlaceholder)
 enterRSS.pack()
 
 root.mainloop() #similar to html, this is what keeps the window open
