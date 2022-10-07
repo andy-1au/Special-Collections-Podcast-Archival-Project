@@ -28,3 +28,7 @@ IMPORTS Not Installed (SOLUTION)
     a. git branch -d localBranchName 
     Delteing the branch remotely
     b. git push origin --delete remoteBranchName
+
+6. How to merge a branch
+    a. git checkout master
+    b. git merge <branch name>
