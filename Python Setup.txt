@@ -15,11 +15,15 @@ IMPORTS Not Installed (SOLUTION)
 
 2. Create a local branch
     a. git checkout -b <branch name> 
-    
+
 3. Create a remote branch
     a. git push -u origin <branch name>
 
-3. How to delete a branch
+4. Formally the command to push a local branch onto the remote branch is
+    a. git push <remote-name> <local-branch-name>:<remote-branch-name>
+        b. do not use this command with a <empty>:<remote-branch-name> it will delete the remote branch
+
+5. How to delete a branch
     Deleting the local reference to the branch
     a. git branch -d localBranchName 
     Delteing the branch remotely
