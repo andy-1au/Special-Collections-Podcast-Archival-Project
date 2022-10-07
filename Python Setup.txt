@@ -33,3 +33,6 @@ IMPORTS Not Installed (SOLUTION)
     a. git checkout master
     b. git merge <branch name>
 
+7. Difference between git add . and -A 
+    a. git add . will add all of the files that are not in the .gitignore file
+    b. git add -A will add all of the files including the files in the .gitignore file
