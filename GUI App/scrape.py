@@ -20,16 +20,4 @@ def run(links):
     print("Finished scraping")
 
 scraping("https://feeds.captivate.fm/gogetters/")
-    
-layout = [[sg.InputText("Link to Podcast RSS Site")],[sg.Button("Download")]]
-window = sg.Window("Podcast Downloader", layout, margins=(200,200))
-
-while True:
-    event, values = window.read() # the event, value holds the value of the input boxes in a array
-    if event == "Download":
-        run(values[0])
-    elif event == sg.WIN_CLOSED:
-        break
-
-window.close()
         

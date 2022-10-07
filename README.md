@@ -1,2 +1,5 @@
 # Special-Collections-Podcast-GUI-Project
-This repo is for developing the GUI project for the podcast files
+GUI for the Special Collections Podcast Project
+functionality: 
+    - Download rss feeds from podcast websites
+    - Convert rss feeds to csv files
