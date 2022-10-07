@@ -16,7 +16,7 @@ csvPath = 'insert your path here' #CSV Folder
 for fileName in os.listdir(xmlPath):
     if not fileName.endswith('.xml'):
         continue
-    xmlFilePath = os.path.join(xmlPath, fileName) #
+    xmlFilePath = os.path.join(xmlPath, fileName) #path to xml file
 
 tree = XET.parse(xmlFilePath)
 root = tree.getroot()
