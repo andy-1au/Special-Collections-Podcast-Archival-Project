@@ -3,7 +3,6 @@ from tkinter import filedialog, Text #pick the apps
 import os 
 import requests
 import xml.etree.ElementTree as XET
-import pandas as pd 
 import csv
 
 root = tk.Tk() # holds the entire app
@@ -29,7 +28,7 @@ def downloadPodcast(path):
 #asks user to select a folder to save the podcasts
 #askdirectory() only lets user select a folder
 def podcast_Folder():
-    podcastFolderPath = filedialog.askdirectory(initialdir="/", title="Select Where to Save the Podcasts")
+    podcastFolderPath = filedialog.askdirectory(initialdir="/", title="Select Desired Folder") 
     pdPathLabel = tk.Label(root, text="Save Podcasts Path: " + podcastFolderPath) # Create a label to display the path of the podcast folder
     pdPathLabel.pack()
     print(podcastFolderPath)
@@ -37,7 +36,7 @@ def podcast_Folder():
 
 #asks user to select the RSS xml file and save the path 
 def select_RSS_Feed():
-    xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
+    xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Desired RSS", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
     # Create a label to display the path of the rss feed
     xmlPathLabel = tk.Label(root, text="RSS Feed Path: " + xmlPath)
     xmlPathLabel.pack()
@@ -45,7 +44,7 @@ def select_RSS_Feed():
 
 #asks user to select the folder to save the downloaded rss feed
 def save_RSS_Feed():
-    xmlPath = filedialog.askdirectory(initialdir="/", title="Select Where to Save the RSS Feed")
+    xmlPath = filedialog.askdirectory(initialdir="/", title="Select Desired Folder")
     xmlPathLabel = tk.Label(root, text="Save RSS Feed Path: " + xmlPath)
     xmlPathLabel.pack() # Create a label to display the path of the rss feed
     print(xmlPath)
@@ -68,6 +67,11 @@ def downloadRSS(entry, xmlPath):
     open(rssPath, 'wb').write(response.content) #writes the content of the rss feed to a specified file named podcast.xml
     print("RSS Feed has been downloaded")
     return rssPath # Return the path to the rss feed
+
+def downloadPodcast(entry, xmlPath):
+    response = requests.get(entry, allow_redirects=True)
+    open(xmlPath+"/rssFeed.xml", 'wb').write(response.content) #writes the content of the rss feed to a specified file named podcast.xml
+    print("Podcast Downloaded")
 
 #attach the canvas to the root
 canvas = tk.Canvas(root, height=700, width=700, bg="#263D42") 
