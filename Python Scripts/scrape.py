@@ -18,6 +18,8 @@ def run(links):
     print('Starting scraping Process')
     scraping(links)
     print("Finished scraping")
+
+scraping("https://feeds.captivate.fm/gogetters/")
     
 layout = [[sg.InputText("Link to Podcast RSS Site")],[sg.Button("Download")]]
 window = sg.Window("Podcast Downloader", layout, margins=(200,200))
