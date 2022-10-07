@@ -6,6 +6,8 @@ import xml.etree.ElementTree as XET
 import pandas as pd 
 import csv
 
+#test message
+
 root = tk.Tk() # holds the entire app
 
 # Script for downloading podcasts(mp3) using rss feed(xml) tags, takes in the path to the rss feed
@@ -24,6 +26,7 @@ def downloadPodcast(path):
             download = requests.get(url, allow_redirects=True) #downloads the file
             print(url + " has been downloaded") 
             open(filePath, 'wb').write(download.content) #writes the file to the path
+    print("All podcasts has been downloaded")
 
 
 #asks user to select a folder to save the podcasts
