@@ -40,24 +40,14 @@ def RSS_Feed():
     xmlPathLabel.pack()
     print(xmlPath)
 
-
 def removePlaceholder(event):
     enterRSS.delete(0, "end")
     return None
 
-# def downloadPodcast():
-#     print("Downloading Podcast")
-#     for child in root.findall('./channel/item/'): #finds all tags in xml file under the item tag
-#         tag = child.tag
-#         if tag == 'enclosure':
-#             url = child.attrib.get('url')
-#             if url.find('/'): #finds the last '/' in the url
-#                 fileName = url.rsplit('/', 1)[1] #gets the file name from the url
-#                 filePath = os.path.join(podcastFolderPath, fileName) #creates a path for the file to be saved
-#             download = requests.get(url, allow_redirects=True) #downloads the file
-#             print(url + " has been downloaded") 
-#             open(filePath, 'wb').write(download.content) #writes the file to the path
-
+def getRSSEntry(): 
+    rssLink = enterRSS.get()
+    print(rssLink)
+    
 
 #attach the canvas to the root
 canvas = tk.Canvas(root, height=700, width=700, bg="#263D42") 
@@ -73,6 +63,9 @@ chooseRSS.pack()
 # button for selecting the folder to save the podcasts
 choosePodcastFolder = tk.Button(frame, text="Select Podcasts Folder", padx=10, pady=5, fg="white", bg="#263D42", command=podcast_Folder) 
 choosePodcastFolder.pack() 
+
+submitRSS = tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=getRSSEntry)
+submitRSS.pack()
 
 # make an entry box for rss feed, add a float label in the entry box
 enterRSS = tk.Entry(frame, width=50, borderwidth=5)
