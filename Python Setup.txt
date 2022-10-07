@@ -12,3 +12,9 @@ IMPORTS Not Installed (SOLUTION)
     b. pay attention to where the imports are installed in and then switch your python version to the correct version
     c. To switch you version click on any python file, then look at the bottom right for the PYTHON #.###### version 
     d. click it and switch to the python version that has all of the pip installations and your plug in should be working now!
+
+2. How to delte a branch
+    Deleting the local reference to the branch
+    a. git branch -d localBranchName 
+    Delteing the branch remotely
+    b. git push origin --delete remoteBranchName
