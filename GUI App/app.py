@@ -1,4 +1,5 @@
 import tkinter as tk #for GUI
+import requests
 from tkinter import filedialog, Text #pick the apps 
 import os 
 
@@ -73,6 +74,16 @@ chooseRSS.pack()
 # button for selecting the folder to save the podcasts
 choosePodcastFolder = tk.Button(frame, text="Select Podcasts Folder", padx=10, pady=5, fg="white", bg="#263D42", command=podcast_Folder) 
 choosePodcastFolder.pack() 
+
+def scraping(url):
+    try:
+        r = requests.get(url)
+        newRSSName = url.split("/")+".xml"
+        open("/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/XML_from_RSS/"+newRSSName , "wb").write(r.content)
+        return print('The scraping job succeeded', r.status_code)
+    except Exception as e:
+        print("The scraping job failed. See exception:")
+        print(e)
 
 # make an entry box for rss feed, add a float label in the entry box
 enterRSS = tk.Entry(frame, width=50, borderwidth=5)

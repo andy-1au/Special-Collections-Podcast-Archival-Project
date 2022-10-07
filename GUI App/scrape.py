@@ -7,8 +7,8 @@ import PySimpleGUI as sg
 def scraping(url):
     try:
         r = requests.get(url)
-        newRSSName = url.split("/")[-2]+".xml"
-        open("/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/XML_from_RSS/"+newRSSName , "wb").write(r.content)
+        newRSSName = url.split("/")+".xml"
+        open("/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/XML/"+newRSSName , "wb").write(r.content)
         return print('The scraping job succeeded', r.status_code)
     except Exception as e:
         print("The scraping job failed. See exception:")
