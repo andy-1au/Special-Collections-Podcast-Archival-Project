@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as XET
-# import pandas as pd
+import pandas as pd
 import csv
 import requests
 import os

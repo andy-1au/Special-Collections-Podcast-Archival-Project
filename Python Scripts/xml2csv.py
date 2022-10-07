@@ -4,7 +4,7 @@ import csv
 tree = XET.parse('nasdaq.xml')
 root = tree.getroot()
 
-nasdaq_data = open('nasdaq.csv', 'w')
+nasdaq_data = open('nasdaq.csv', 'w') # the file contents is open here
 
 csvwriter = csv.writer(nasdaq_data)
 nasdaq_header = []
@@ -29,7 +29,6 @@ for i in root.findall('./channel/item'):
         nasdaq_header.append(season)
         episode = i.find("iepisode").tag
         nasdaq_header.append(episode)
-
         csvwriter.writerow(nasdaq_header)
         count+=1
     

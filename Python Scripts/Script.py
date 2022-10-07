@@ -19,22 +19,15 @@ for fileName in os.listdir(xmlPath):
 tree = XET.parse(xmlFilePath)
 root = tree.getroot()
 
-podcastFolderPath = '/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/Podcasts'
 
 for child in root.findall('./channel/item/'):
     tag = child.tag
     if tag == 'enclosure':
         url = child.attrib.get('url')
         download = requests.get(url, allow_redirects=True)
+        podcastFolderPath = "/Users/dennis/Work Study/Special-Collections-Podcast-GUI-Project/Podcasts"
+        downloadedFileName = url.rsplit("/",1)[1]
+        podcastFolderPath = os.path.join(podcastFolderPath, downloadedFileName)
         open(podcastFolderPath, 'wb').write(download.content)
         print(url + "has been downloaded")
-
-
-
-# for child in root: 
-#     tag = child.tag
-#     print(tag)
-#     if tag == 'enclosure url':
-#         print(child.text)
     
-
