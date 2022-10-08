@@ -1,5 +1,5 @@
 import tkinter as tk #for GUI
-from tkinter import filedialog, Text #pick the apps 
+from tkinter import CENTER, filedialog, Text #pick the apps 
 import os
 from traceback import print_tb 
 import requests
@@ -85,22 +85,22 @@ frame = tk.Frame(root, bg="white") #create a frame
 frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the middle of the canvas
 
 # --------------  Buttons Section ----------------- 
-# Select RSS Feed from File Button
-tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=select_RSS_Feed).pack() 
+#Select RSS Feed from File Button
+tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=select_RSS_Feed).pack(side="top", fill="x") 
 
 # Submit RSS Feed button
-tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=get_RSS_Entry).pack()
+tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=get_RSS_Entry).pack(side="top", fill="x")
 
 # Quit button
-tk.Button(root, text="Quit", padx=10, pady=5, fg="white", bg="#263D42", command=root.destroy).pack()
+tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="#263D42", command=root.destroy).pack(side="bottom", fill="x", expand=True)
 # --------------  Buttons Section ----------------- 
 
 # ----------------- Entry Section -----------------
 # make an entry box for rss feed, add a float label in the entry box
 enterRSS = tk.Entry(frame, width=50, borderwidth=5)
-enterRSS.insert(0, "Enter RSS Feed")
+enterRSS.insert("end", "Enter RSS Feed Here")
 enterRSS.bind("<Button-1>", remove_PH)
-enterRSS.pack()
+enterRSS.pack(side="top", fill="x", expand=True)
 # ----------------- Entry Section -----------------
 
 # ----------------- Text Box Section -----------------
