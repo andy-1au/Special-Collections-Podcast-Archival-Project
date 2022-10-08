@@ -1,12 +1,26 @@
+from ctypes import sizeof
 import tkinter as tk #for GUI
 from tkinter import filedialog, Text, CENTER
 from tkinter import ttk
-import os
-from traceback import print_tb 
+from tkinter.messagebox import showerror
+from threading import Thread
 import requests
+import os 
 import xml.etree.ElementTree as XET
 import pandas as pd 
 import csv
+
+#------------------Multi-Threading------------------#
+class async_Download(Thread):
+    def __init__(self, url):
+        super().__init__()
+        self.html = None
+        self.url = url
+
+    def run(self):
+        response = requests.get(self.url)
+        self.html = response.text
+#------------------Multi-Threading------------------#
 
 # Script for downloading podcasts(mp3) using rss feed(xml) tags, takes in the path to the rss feed
 def download_PD(path):
@@ -76,12 +90,13 @@ def downloadRSS(entry, xmlPath):
 
 # make a function to print terminal output to the GUI textbox
 def printToGUI(text):
-    print(text)
+    print(text) # DEBUG
     outputBox.insert("end", text + "")
     root.update()
 
 root = tk.Tk() # holds the entire app
 root.title("Podcast Downloader")
+root.resizable(0, 0) # disable resizing the window
 
 #------------------Working On Styling------------------
 # #Add some styling to the app
@@ -99,35 +114,36 @@ root.title("Podcast Downloader")
 #------------------Working On Styling------------------
 
 #attach the canvas to the root
-canvas = tk.Canvas(root, height=700, width=700, bg="white").pack() #pack the canvas to the root so it can be seen
+frame = tk.Frame(root, bg="black") #pack the canvas to the root so it can be seen
+frame.pack()
 
-frame = tk.Frame(root, bg="black") #create a frame
-frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the root
+# frame = tk.Frame(root, bg="black") #create a frame
+# frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the root
 
 # --------------  Buttons Section ----------------- 
 #Select RSS Feed from File Button
-tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=select_RSS_Feed).pack(side="top", fill="x", expand=True)
+tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="black", command=select_RSS_Feed).pack(side="top", fill="both", expand=True)
 
-# Submit RSS Feed button
-tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=get_RSS_Entry).pack(side="top", fill="x", expand=True)
+# Submit RSS Feed butt
+tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="black", command=get_RSS_Entry).pack(side="top", fill="both", expand=True)
 
 # Quit button
-tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="#263D42", command=root.destroy).pack(side="bottom", fill="x", expand=True)
+tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="black", command=root.destroy).pack(side="bottom", fill="both", expand=True)
 # --------------  Buttons Section ----------------- 
 
 # ----------------- Entry Section -----------------
 # make an entry box for rss feed, add a float label in the entry box
-enterRSS = tk.Entry(frame, width=50, borderwidth=5, bg="#263D42", fg="white")
+enterRSS = tk.Entry(frame, width=20, borderwidth=5, bg="black", fg="white")
 enterRSS.configure(justify=CENTER)
 enterRSS.insert("end", "Enter RSS Feed Here")
 enterRSS.bind("<Button-1>", remove_PH)
-enterRSS.pack(side="top", fill="x", expand=True)
+enterRSS.pack(side="top", fill="both", expand=True)
 # ----------------- Entry Section -----------------
 
 # ----------------- Text Box Section -----------------
 # make a text box for terminal output
-outputBox = tk.Text(frame, height=50, width=50, borderwidth=5, bg="#263D42")
-outputBox.pack()
+outputBox = tk.Text(frame, height=25, width=50, borderwidth=5, bg="black")
+outputBox.pack(fill="both", expand=True)
 # ----------------- Text Box Section -----------------
 
 root.mainloop() #similar to html, this is what keeps the window open
