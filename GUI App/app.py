@@ -99,17 +99,17 @@ root.title("Podcast Downloader")
 #------------------Working On Styling------------------
 
 #attach the canvas to the root
-canvas = tk.Canvas(root, height=1000, width=1000, bg="white").pack() #pack the canvas to the root so it can be seen
+canvas = tk.Canvas(root, height=700, width=700, bg="white").pack() #pack the canvas to the root so it can be seen
 
 frame = tk.Frame(root, bg="black") #create a frame
 frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the root
 
 # --------------  Buttons Section ----------------- 
 #Select RSS Feed from File Button
-tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=select_RSS_Feed).pack(side="top", fill="x") 
+tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=select_RSS_Feed).pack(side="top", fill="x", expand=True)
 
 # Submit RSS Feed button
-tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=get_RSS_Entry).pack(side="top", fill="x")
+tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="#263D42", command=get_RSS_Entry).pack(side="top", fill="x", expand=True)
 
 # Quit button
 tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="#263D42", command=root.destroy).pack(side="bottom", fill="x", expand=True)
