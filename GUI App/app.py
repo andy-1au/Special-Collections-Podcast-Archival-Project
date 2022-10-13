@@ -11,22 +11,28 @@ import pandas as pd
 import csv
 
 #------------------Multi-Threading------------------#
-class async_Download(Thread):
-    def __init__(self, url):
-        super().__init__()
-        self.html = None
-        self.url = url
+# class async_Download(Thread):
+#     def __init__(self, url):
+#         super().__init__()
+#         self.html = None
+#         self.url = url
 
-    def run(self):
-        response = requests.get(self.url)
-        self.html = response.text
+#     def run(self):
+#         response = requests.get(self.url)
+#         self.html = response.text
 #------------------Multi-Threading------------------#
 
 # Script for downloading podcasts(mp3) using rss feed(xml) tags, takes in the path to the rss feed
+
+def openXML(xmlFile):
+    tree = XET.parse(xmlFile)
+    root = tree.getroot()
+    return root
+    
 def download_PD(path):
     printToGUI("Downloading Podcast\n")
-    tree = XET.parse(path) #parse the xml file
-    root = tree.getroot() #get the root of the xml file
+    root = openXML(path) # call openXML() to get root of the xml file
+
     podcastFolderPath = podcast_Folder() # Get the path to save the podcast
     for child in root.findall('./channel/item/'): #finds all tags in xml file under the item tag
         tag = child.tag
@@ -90,7 +96,7 @@ def downloadRSS(entry, xmlPath):
 
 # make a function to print terminal output to the GUI textbox
 def printToGUI(text):
-    print(text) # DEBUG
+    print(text) # DEBUG     
     outputBox.insert("end", text + "")
     root.update()
 
