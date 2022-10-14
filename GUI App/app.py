@@ -123,79 +123,93 @@ def print_To_GUI(text):
     outputBox.insert("end", text + "")
     root.update()
 
+    
+
 root = tk.Tk() # holds the entire app
+#make the app open in a bigger window
+root.geometry("1000x1000")
 root.title("Podcast Downloader")
 #root.resizable(0, 0) # disable resizing the window
 
-#------------------Working On Styling------------------
-# #Add some styling to the app
-# style = ttk.Style()
-# style.configure("Treeview",
-#     background = "silver",
-#     foreground = "black",
-#     rowheight = 25,
-#     fieldbackground = "silver")
-
-# style.map('Treeview',
-#     background = [('selected', 'blue')]) 
-
-# my_tree = ttk.Treeview(root)
-#------------------Working On Styling------------------
-
-#attach the canvas to the root
-frame = tk.Frame(root, bg="black") #pack the canvas to the root so it can be seen
-frame.pack()
-
-# frame = tk.Frame(root, bg="black") #create a frame
-# frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the root
-
 # --------------  Buttons Section ----------------- 
 #Select RSS Feed from File Button
-tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="black", command=select_RSS_Feed).pack(side="top", fill="both", expand=True)
+#Create a section and style it just for the buttons, make it a frame on the left side of the window
+buttonFrame = tk.Frame(root, bg="black")
+buttonFrame.pack(side="left", fill="both", expand=False)
 
-# Submit RSS Feed butt
-tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="black", command=get_RSS_Entry).pack(side="top", fill="both", expand=True)
+#Create a button to select the RSS feed from a file
+selectRSSButton = tk.Button(buttonFrame, text="Select RSS Feed", command=select_RSS_Feed).pack()
 
-# Get Tags Button
-tk.Button(frame, text="Get Tags", padx=10, pady=5, fg="white", bg="black", command=get_Tags).pack(side="top", fill="both", expand=True)
+#Create a button to submit the RSS feed url
+submitRSSButton = tk.Button(buttonFrame, text="Submit RSS Feed", command=get_RSS_Entry).pack()
 
+#Create a button to get the tags and text from the RSS feed
+getTagsButton = tk.Button(buttonFrame, text="Get Tags", command=get_Tags).pack()
 
-# Quit button
-tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="black", command=root.destroy).pack(side="bottom", fill="both", expand=True)
-# --------------  Buttons Section ----------------- 
+#Create a button to quit the app, put this button on the bottom of the button frame
+quitButton = tk.Button(buttonFrame, text="Quit", command=root.quit).pack(side="bottom")
 
-# ----------------- Entry Section -----------------
-# make an entry box for rss feed, add a float label in the entry box
-enterRSS = tk.Entry(frame, width=20, borderwidth=5, bg="black", fg="white")
-enterRSS.configure(justify=CENTER)
-enterRSS.insert("end", "Enter RSS Feed Here")
+# --------------  Entry Section -----------------
+#Create a section and style it just for the entry box, make it a frame on the right side of the window
+entryFrame = tk.Frame(root, bg="black")
+entryFrame.pack(side="right", fill="both", expand=False)
+
+#Create an entry box for the RSS feed url
+enterRSS = tk.Entry(entryFrame, width=50)
+enterRSS.insert(0, "Enter RSS Feed URL")
 enterRSS.bind("<Button-1>", remove_PH)
-enterRSS.pack(side="top", fill="both", expand=True)
-# ----------------- Entry Section -----------------
+enterRSS.pack()
 
-# ----------------- Text Box Section -----------------
-# make a text box for terminal output
-outputBox = tk.Text(frame, height=25, width=50, borderwidth=5, bg="black")
-outputBox.pack(fill="both", expand=True)
-# ----------------- Text Box Section -----------------
+#put a terminal output box right below the entry box
+outputBox = tk.Text(entryFrame, height=48, width=50).pack()
 
-#Create labels matching the selection of tags
-#I want titles, description, link, pubDate, duration, enclosure, season, and episode as the labels
-tk.Label(frame, text="Title", bg="black", fg="white").pack(side="top", expand=True)
+labelFrame = tk.Frame(root, bg="black")
+labelFrame.pack(side="top", fill="both", expand=True)
 
-tk.Label(frame, text="Description", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the title
+titleLabel = tk.Label(labelFrame, text="Title")
+titleLabel.grid(row=0, column=0)
 
-tk.Label(frame, text="Link", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the description
+descriptionLabel = tk.Label(labelFrame, text="Description")
+descriptionLabel.grid(row=1, column=0)
 
-tk.Label(frame, text="PubDate", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the link
+linkLabel = tk.Label(labelFrame, text="Link")
+linkLabel.grid(row=2, column=0)
 
-tk.Label(frame, text="Duration", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the pubDate
+pubDateLabel = tk.Label(labelFrame, text="PubDate")
+pubDateLabel.grid(row=3, column=0)
 
-tk.Label(frame, text="Enclosure", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the duration
+durationLabel = tk.Label(labelFrame, text="Duration")
+durationLabel.grid(row=4, column=0)
 
-tk.Label(frame, text="Season", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the enclosure
+enclosureLabel = tk.Label(labelFrame, text="Enclosure")
+enclosureLabel.grid(row=5, column=0)
 
-tk.Label(frame, text="Episode", bg="black", fg="white").pack(side="top", expand=True)
+#Create a label for the season
+seasonLabel = tk.Label(labelFrame, text="Season")
+seasonLabel.grid(row=6, column=0)
+
+#Create a label for the episode
+episodeLabel = tk.Label(labelFrame, text="Episode")
+episodeLabel.grid(row=7, column=0)
+
+#Create a drop down menu next to the title label
+#the drop down menu will be a list of tags from the RSS feed
+#the user will select the tag that matches the title
+#the values in the drop down menu will be the list of tags from the RSS feed
+
+#Create a drop down menu next to the description label
+
+titleDropDown = tk.OptionMenu(labelFrame, tk.StringVar(), "Title")
+titleDropDown.grid(row=0, column=1)
+
+
+
 
 
 
