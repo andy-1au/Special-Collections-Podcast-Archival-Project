@@ -10,6 +10,10 @@ import xml.etree.ElementTree as XET
 import pandas as pd 
 import csv
 
+#------------------RSS LINK------------------#
+#https://feeds.captivate.fm/gogetters/
+#------------------RSS LINK------------------#
+
 #------------------Multi-Threading------------------#
 # class async_Download(Thread):
 #     def __init__(self, url):
@@ -24,14 +28,33 @@ import csv
 
 # Script for downloading podcasts(mp3) using rss feed(xml) tags, takes in the path to the rss feed
 
-def openXML(xmlFile):
+def get_Tags():
+    tagsList = []
+    attribList = []
+    textList = []
+    xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
+    root = open_XML(xmlPath)
+    for i in root.findall('./channel/item/'):
+        tag = i.tag
+        attrib = i.attrib
+        text = i.text
+        tagsList.append(tag)
+        if text != None:
+            textList.append(text)
+        
+    # print(tagsList)
+    # print(textList)
+    return tagsList, textList
+
+
+def open_XML(xmlFile):
     tree = XET.parse(xmlFile)
     root = tree.getroot()
     return root
     
 def download_PD(path):
-    printToGUI("Downloading Podcast\n")
-    root = openXML(path) # call openXML() to get root of the xml file
+    print_To_GUI("Downloading Podcast\n")
+    root = open_XML(path) # call open_XML() to get root of the xml file
 
     podcastFolderPath = podcast_Folder() # Get the path to save the podcast
     for child in root.findall('./channel/item/'): #finds all tags in xml file under the item tag
@@ -42,11 +65,11 @@ def download_PD(path):
                 fileName = url.rsplit('/', 1)[1] #gets the file name from the url
                 filePath = os.path.join(podcastFolderPath, fileName) #creates a path for the file to be saved
             download = requests.get(url, allow_redirects=True) #downloads the file
-            printToGUI(url + " has been downloaded\n") 
+            print_To_GUI(url + " has been downloaded\n") 
             open(filePath, 'wb').write(download.content) #writes the file to the path
-    printToGUI("All podcasts has been downloaded\n") 
+    print_To_GUI("All podcasts have been downloaded\n") 
     download.close() #closes the connection to the server
-    printToGUI("Connection Closed\n") #DEBUG, even when the request is closed, the app window still runs
+    print_To_GUI("Connection Closed\n") #DEBUG, even when the request is closed, the app window still runs
 
 #asks user to select a folder to save the podcasts
 #askdirectory() only lets user select a folder
@@ -83,26 +106,26 @@ def get_RSS_Entry():
     rssLink = enterRSS.get() # Get the RSS feed from the entry box
     print(rssLink) # DEBUG
     xmlPath = save_RSS_Feed() # Get the path to save the RSS feed, requires user input
-    rssPath = downloadRSS(rssLink, xmlPath) # Get the path to the downloaded RSS feed
+    rssPath = download_RSS(rssLink, xmlPath) # Get the path to the downloaded RSS feed
     download_PD(rssPath) # Use the path of RSS feed for download podcast function
 
 # function to download the rss feed from the url and return the path to the downloaded rss feed
-def downloadRSS(entry, xmlPath):
+def download_RSS(entry, xmlPath):
     response = requests.get(entry, allow_redirects=True)
     rssPath = os.path.join(xmlPath, "rss.xml")
     open(rssPath, 'wb').write(response.content) #writes the content of the rss feed to a specified file named podcast.xml
-    printToGUI("RSS Feed has been downloaded\n")
+    print_To_GUI("RSS Feed has been downloaded\n")
     return rssPath 
 
 # make a function to print terminal output to the GUI textbox
-def printToGUI(text):
+def print_To_GUI(text):
     print(text) # DEBUG     
     outputBox.insert("end", text + "")
     root.update()
 
 root = tk.Tk() # holds the entire app
 root.title("Podcast Downloader")
-root.resizable(0, 0) # disable resizing the window
+#root.resizable(0, 0) # disable resizing the window
 
 #------------------Working On Styling------------------
 # #Add some styling to the app
@@ -133,6 +156,10 @@ tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="black"
 # Submit RSS Feed butt
 tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="black", command=get_RSS_Entry).pack(side="top", fill="both", expand=True)
 
+# Get Tags Button
+tk.Button(frame, text="Get Tags", padx=10, pady=5, fg="white", bg="black", command=get_Tags).pack(side="top", fill="both", expand=True)
+
+
 # Quit button
 tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="black", command=root.destroy).pack(side="bottom", fill="both", expand=True)
 # --------------  Buttons Section ----------------- 
@@ -151,6 +178,26 @@ enterRSS.pack(side="top", fill="both", expand=True)
 outputBox = tk.Text(frame, height=25, width=50, borderwidth=5, bg="black")
 outputBox.pack(fill="both", expand=True)
 # ----------------- Text Box Section -----------------
+
+#Create labels matching the selection of tags
+#I want titles, description, link, pubDate, duration, enclosure, season, and episode as the labels
+tk.Label(frame, text="Title", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="Description", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="Link", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="PubDate", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="Duration", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="Enclosure", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="Season", bg="black", fg="white").pack(side="top", expand=True)
+
+tk.Label(frame, text="Episode", bg="black", fg="white").pack(side="top", expand=True)
+
+
 
 root.mainloop() #similar to html, this is what keeps the window open
 
