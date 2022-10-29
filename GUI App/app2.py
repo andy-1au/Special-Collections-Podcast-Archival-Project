@@ -13,6 +13,8 @@ import os
 #------------------RSS LINK------------------#
 #https://feeds.captivate.fm/gogetters/
 #------------------RSS LINK------------------#
+
+#NOTE: all we need to do is change the some itune tags in the xml file to simplier tags so that it can read easily
 def convert_to_csv(wantedTags, xmlFile, csvDest):
     print("Converting to CSV") #DEBUG
     root = open_XML(xmlFile)
@@ -41,8 +43,6 @@ def convert_to_csv(wantedTags, xmlFile, csvDest):
     csv_writer.writerow(podcast_row)
     print("CSV has been created") #DEBUG
     podcast_CSV.close()
-    
-    #save the csv file to the specified location
 
 # def convert_to_csv():
 def get_tags(xmlFile):
