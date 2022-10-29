@@ -1,4 +1,5 @@
 from ctypes import sizeof
+from re import T
 import tkinter as tk #for GUI
 from tkinter import filedialog, Text, CENTER
 from tkinter import ttk
@@ -14,37 +15,26 @@ import csv
 #https://feeds.captivate.fm/gogetters/
 #------------------RSS LINK------------------#
 
-#------------------Multi-Threading------------------#
-# class async_Download(Thread):
-#     def __init__(self, url):
-#         super().__init__()
-#         self.html = None
-#         self.url = url
-
-#     def run(self):
-#         response = requests.get(self.url)
-#         self.html = response.text
-#------------------Multi-Threading------------------#
-
 # Script for downloading podcasts(mp3) using rss feed(xml) tags, takes in the path to the rss feed
-
 def get_Tags():
     tagsList = []
-    attribList = []
-    textList = []
+    contentList = []
+
+
     xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
     root = open_XML(xmlPath)
     for i in root.findall('./channel/item/'):
         tag = i.tag
-        attrib = i.attrib
-        text = i.text
-        tagsList.append(tag)
-        if text != None:
-            textList.append(text)
-        
-    # print(tagsList)
-    # print(textList)
-    return tagsList, textList
+        # some tags have {} in them with contents, remove it and replace it with 'itunes'
+        if tag.find('{') != -1:
+            tag = tag.replace(tag[1:tag.find('}')], 'itunes')
+        # add the tag to the list
+        if tag not in tagsList:
+            tagsList.append(tag)
+
+    print(tagsList)
+    return tagsList
+
 
 
 def open_XML(xmlFile):
@@ -79,8 +69,9 @@ def podcast_Folder():
     pdPathLabel.pack()
     print(podcastFolderPath)
     return podcastFolderPath
-
-#asks user to select the RSS xml file and save the path 
+ 
+#asks user to select the RSS xml file and save the path
+#remove this later  
 def select_RSS_Feed():
     xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
     # Create a label to display the path of the rss feed
@@ -127,7 +118,7 @@ def print_To_GUI(text):
 
 root = tk.Tk() # holds the entire app
 #make the app open in a bigger window
-root.geometry("1000x1000")
+root.geometry("800x600")
 root.title("Podcast Downloader")
 #root.resizable(0, 0) # disable resizing the window
 
@@ -146,6 +137,7 @@ submitRSSButton = tk.Button(buttonFrame, text="Submit RSS Feed", command=get_RSS
 #Create a button to get the tags and text from the RSS feed
 getTagsButton = tk.Button(buttonFrame, text="Get Tags", command=get_Tags).pack()
 
+
 #Create a button to quit the app, put this button on the bottom of the button frame
 quitButton = tk.Button(buttonFrame, text="Quit", command=root.quit).pack(side="bottom")
 
@@ -163,55 +155,10 @@ enterRSS.pack()
 #put a terminal output box right below the entry box
 outputBox = tk.Text(entryFrame, height=48, width=50).pack()
 
-labelFrame = tk.Frame(root, bg="black")
+labelFrame = tk.Frame(root, bg="blue")
 labelFrame.pack(side="top", fill="both", expand=True)
-
-#Create a label for the title
-titleLabel = tk.Label(labelFrame, text="Title")
-titleLabel.grid(row=0, column=0)
-
-#Create a label for the description
-descriptionLabel = tk.Label(labelFrame, text="Description")
-descriptionLabel.grid(row=1, column=0)
-
-#Create a label for the link
-linkLabel = tk.Label(labelFrame, text="Link")
-linkLabel.grid(row=2, column=0)
-
-#Create a label for the pubDate
-pubDateLabel = tk.Label(labelFrame, text="PubDate")
-pubDateLabel.grid(row=3, column=0)
-
-#Create a label for the duration
-durationLabel = tk.Label(labelFrame, text="Duration")
-durationLabel.grid(row=4, column=0)
-
-#Create a label for the enclosure
-enclosureLabel = tk.Label(labelFrame, text="Enclosure")
-enclosureLabel.grid(row=5, column=0)
-
-#Create a label for the season
-seasonLabel = tk.Label(labelFrame, text="Season")
-seasonLabel.grid(row=6, column=0)
-
-#Create a label for the episode
-episodeLabel = tk.Label(labelFrame, text="Episode")
-episodeLabel.grid(row=7, column=0)
-
-#Create a drop down menu next to the title label
-#the drop down menu will be a list of tags from the RSS feed
-#the user will select the tag that matches the title
-#the values in the drop down menu will be the list of tags from the RSS feed
-
-#Create a drop down menu next to the description label
-
-titleDropDown = tk.OptionMenu(labelFrame, tk.StringVar(), "Title")
-titleDropDown.grid(row=0, column=1)
-
-
 
 
 
 
 root.mainloop() #similar to html, this is what keeps the window open
-
