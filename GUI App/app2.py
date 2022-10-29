@@ -5,6 +5,7 @@ from turtle import down
 import PySimpleGUI as sg 
 import pandas as pd
 import xml.etree.ElementTree as XET
+import csv
 import requests
 import os 
 
@@ -12,10 +13,59 @@ import os
 #------------------RSS LINK------------------#
 #https://feeds.captivate.fm/gogetters/
 #------------------RSS LINK------------------#
-
+def convert_to_csv(wantedTags, xmlFile, csvDest):
+    print("Converting to CSV") #DEBUG
+    root = open_XML(xmlFile)
+    
+    savePath = os.path.join(csvDest, "podcast.csv") #creates a path for the file to be saved
+    
+    podcast_CSV = open(savePath, 'w', newline='') #opens the file in write mode
+    
+    csv_writer = csv.writer(podcast_CSV)
+    podcast_header = [] 
+    for tag in wantedTags:
+        podcast_header.append(tag) 
+    csv_writer.writerow(podcast_header)
+    
+    # count = 0
+    podcast_row = []
+    for tag in wantedTags:
+        for child in root.findall('./channel/item/'):
+            if tag == "enclosure":
+                podcast_row.append(child.attrib.get('url'))
+            if tag.find('duration') != -1:
+                print("found duration")
+                podcast_row.append(child.find("itunes:duration").text)
+            if child.tag == tag:
+                podcast_row.append(child.text)
+    csv_writer.writerow(podcast_row)
+    print("CSV has been created") #DEBUG
+    podcast_CSV.close()
+    
+    #save the csv file to the specified location
 
 # def convert_to_csv():
-
+def get_tags(xmlFile):
+    originalTags = []
+    tagsList = []
+    contentList = []
+    
+    root = open_XML(xmlFile)
+    for i in root.findall('./channel/item/'):
+        tag = i.tag
+        otag = i.tag
+        if otag not in originalTags:
+            originalTags.append(otag)
+        # some tags have {} in them with contents, remove it and replace it with 'itunes'
+        if tag.find('{') != -1:
+            tag = tag.replace(tag[1:tag.find('}')], 'itunes')
+        # add the tag to the list
+        if tag not in tagsList:
+            tagsList.append(tag)
+            
+    print(tagsList)
+    print(originalTags)
+    return tagsList
 
 def download_RSS(url, rssDest):
     print("Downloading RSS Feed") #DEBUG
@@ -57,6 +107,34 @@ def is_valid_path(filepath):
     else:
         return False
 
+def select_tags_windows(tagsList, xmlFile, csvDest):
+    layout = [] #create empty layout and add to it later
+    
+    for tag in tagsList:
+        layout.append([sg.Checkbox(tag, key=tag, default=False)])
+    
+    #add a column to the layout
+    layout.append([sg.Column([[sg.Button("Cancel"), sg.Button("Save")]])])
+    # layout.append([sg.Button("Cancel"), sg.Button("Save")])
+    
+    window = sg.Window("Select Tags", layout, modal=True)
+    
+    while True:
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == "Cancel":
+            window.close()
+            return None
+        elif event == "Save":
+            window.close()
+            wantedTags = []
+            if values:
+                for tag in tagsList: 
+                    if values[tag]: #checks if the tag is checked
+                        wantedTags.append(tag)
+            print(wantedTags) #DEBUG
+            convert_to_csv(wantedTags, xmlFile, csvDest)
+            
+
 def settings_window():
     
     # dropdown list for theme
@@ -86,7 +164,6 @@ def main_window():
     
     # Menu Definition
     menu_def = [["Help", ["About", "Settings", "Exit"]]]
-    
     
     # GUI Layout
     layout = [
@@ -137,7 +214,14 @@ def main_window():
                 download_PD(values["-XML_File-"], values["-POD_DEST-"])
                 
         if event == "Convert To CSV":
-            sg.popup("This feature is not available yet") 
+            if not is_valid_path(values["-XML_File-"]):
+                sg.popup("Please enter a VALID file path for the location of the XML file")
+            # elif not is_valid_path(values["-CSV_DEST-"]):
+            #     sg.popup("Please enter a VALID file path for storing the CSV file")
+            else:
+                list = get_tags(values["-XML_File-"])
+                select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"])
+                
             # print("Converting To CSV") #DEBUG
             
     window.close() 

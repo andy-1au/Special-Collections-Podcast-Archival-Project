@@ -20,7 +20,6 @@ def get_Tags():
     tagsList = []
     contentList = []
 
-
     xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
     root = open_XML(xmlPath)
     for i in root.findall('./channel/item/'):
