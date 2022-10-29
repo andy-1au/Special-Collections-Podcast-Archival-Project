@@ -57,9 +57,9 @@ def is_valid_path(filepath):
     else:
         return False
 
-def settings_window(settings):
+def settings_window():
+    
     # dropdown list for theme
-    sg.DropDown(values=sg.theme_list(), default_value=settings["GUI"]["theme"], key="-THEME-")
     layout = [
                 [sg.Text("Font:"), sg.DropDown(values=sg.Text.fonts_installed_list(), default_value=settings["GUI"]["font_family"], key="-FONT-"), sg.Text("Font-Size:"), sg.Input(settings["GUI"]["font_size"], s=2, key="-F_SIZE-"), sg.Text("Theme:"), sg.DropDown(values=sg.theme_list(), default_value=settings["GUI"]["theme"], key="-THEME-")],
                 [sg.Button("Cancel"), sg.Button("Save")]   
@@ -82,12 +82,17 @@ def settings_window(settings):
             break
     window.close()
    
-def main_window(settings):
+def main_window():
+    
+    # Menu Definition
+    menu_def = [["Help", ["About", "Settings", "Exit"]]]
+    
     
     # GUI Layout
     layout = [
             #each line in the layout list is a row 
             #LATER - add placeholder and disappear when clicked
+            [sg.MenubarCustom(menu_def, tearoff=False, key="-MENU-")],
             [sg.Text("RSS Feed Link:"), sg.Input(key="-RSS_URL-")],
             [sg.Text("XML File:"), sg.Input(key="-XML_File-"), sg.FileBrowse(file_types=(("XML Files", "*.xml"),))], 
             [sg.Text("RSS Destination:"), sg.Input(key="-RSS_DEST-"), sg.FolderBrowse()],
@@ -106,9 +111,14 @@ def main_window(settings):
         
         if event == sg.WIN_CLOSED or event == "Exit": #WIN_CLOSED = X button, Exit = Exit button
             break 
+        
+        if event == "About":
+            window.disappear() #hide the main window
+            sg.popup("Version: " + settings["About"]["version"], "Author: " + settings["About"]["author"], "Organization: " + settings["About"]["organization"], "Functionality: " + "Download RSS feeds & mp3 podcast files\n\t\t       Convert RSS to CSV format") #popup window
+            window.reappear()
             
         if event == "Settings":
-            settings_window(settings)
+            settings_window()
         
         if event == "Download RSS":
             if (values["-RSS_URL-"] == ""):
@@ -147,4 +157,4 @@ if __name__ == "__main__":
     sg.theme(theme)
     sg.set_options(font=(font_family, font_size))
     
-    main_window(settings) #call main_window() function after the settings have been loaded
+    main_window() #call main_window() function after the settings have been loaded
