@@ -1,16 +1,10 @@
-# from ast import main
-from pathlib import Path
-# from pydoc import text
-# from tkinter import Text
-# from turtle import down
+from pathlib import Path #for path validation
 
 import PySimpleGUI as sg 
-import pandas as pd
 import xml.etree.ElementTree as XET
-import csv
-import requests
-import os 
-
+import csv 
+import requests #for downloading the RSS feed
+import os #for path manipulation
 
 #------------------RSS LINK------------------#
 #https://feeds.captivate.fm/gogetters/
@@ -126,10 +120,9 @@ def select_tags_windows(tagsList, xmlFile, csvDest):
         layout.append([sg.Checkbox(tag, key=tag, default=False)])
     
     #add a column to the layout
-    layout.append([sg.Column([[sg.Button("Cancel"), sg.Button("Save")]])])
-    # layout.append([sg.Button("Cancel"), sg.Button("Save")])
+    layout.append([sg.B("Cancel"), sg.B("Save")])
     
-    window = sg.Window("Select Tags", layout, modal=True)
+    window = sg.Window("Select Tags", layout, modal=True, use_custom_titlebar = True)
     
     while True:
         event, values = window.read()
@@ -139,23 +132,25 @@ def select_tags_windows(tagsList, xmlFile, csvDest):
         elif event == "Save":
             window.close()
             wantedTags = []
-            if values:
-                for tag in tagsList: 
-                    if values[tag]: #checks if the tag is checked
-                        wantedTags.append(tag)
+            for tag in tagsList: 
+                if values[tag]: #checks if the tag is checked
+                    wantedTags.append(tag)
+            if not wantedTags:
+                sg.popup("No tags selected")
+                return None
+            else:
+                 convert_to_csv(wantedTags, xmlFile, csvDest)
+                 sg.popup("Converting to CSV")
             print(wantedTags) #DEBUG
-            convert_to_csv(wantedTags, xmlFile, csvDest)
             
-
 def settings_window():
-    
     # dropdown list for theme
     layout = [
-                [sg.Text("Font:"), sg.DropDown(values=sg.Text.fonts_installed_list(), default_value=settings["GUI"]["font_family"], key="-FONT-"), sg.Text("Font-Size:"), sg.Input(settings["GUI"]["font_size"], s=2, key="-F_SIZE-"), sg.Text("Theme:"), sg.DropDown(values=sg.theme_list(), default_value=settings["GUI"]["theme"], key="-THEME-")],
-                [sg.Button("Cancel"), sg.Button("Save")]   
+                [sg.T("Font:"), sg.DropDown(values=sg.T.fonts_installed_list(), default_value=settings["GUI"]["font_family"], key="-FONT-"), sg.T("Font-Size:"), sg.I(settings["GUI"]["font_size"], s=2, key="-F_SIZE-"), sg.T("Theme:"), sg.DropDown(values=sg.theme_list(), default_value=settings["GUI"]["theme"], key="-THEME-")],
+                [sg.B("Cancel"), sg.B("Save")]   
             ]
     
-    window = sg.Window("Settings", layout, modal=True) #modal makes it so that user can't interact with the main window while the settings window is open
+    window = sg.Window("Settings", layout, modal=True, use_custom_titlebar = True) #modal makes it so that user can't interact with the main window while the settings window is open
     
     while True:
         event, values = window.read()
@@ -182,17 +177,16 @@ def main_window():
         #each line in the layout list is a row separated by commas 
         #LATER - add placeholder and disappear when clicked
         [sg.MenubarCustom(menu_def, tearoff=False, key="-MENU-")],
-        [sg.Text("RSS Feed Link:"), sg.Input(key="-RSS_URL-")],
-        [sg.Text("XML File:"), sg.Input(key="-XML_File-"), sg.FileBrowse(file_types=(("XML Files", "*.xml"),))], 
-        [sg.Text("RSS Destination:"), sg.Input(key="-RSS_DEST-"), sg.FolderBrowse()],
-        [sg.Text("Podcast Destination:"), sg.Input(key="-POD_DEST-"), sg.FolderBrowse()],
-        [sg.Text("CSV Destination:"), sg.Input(key="-CSV_DEST-"), sg.FolderBrowse()],
-        [sg.Exit(), sg.Button("Settings"), sg.Button("Download RSS"), sg.Button("Download Podcasts"), sg.Button("Convert To CSV"), sg.Button("Open CSV")]  
+        [sg.T("RSS Feed Link:", s=16, justification="r"), sg.I(key="-RSS_URL-")],
+        [sg.T("XML File:", s=16, justification="r"), sg.I(key="-XML_File-"), sg.FileBrowse(file_types=(("XML Files", "*.xml"),))], 
+        [sg.T("RSS Destination:", s=16, justification="r"), sg.I(key="-RSS_DEST-"), sg.FolderBrowse()],
+        [sg.T("Podcast Destination:", s=16, justification="r"), sg.I(key="-POD_DEST-"), sg.FolderBrowse()],
+        [sg.T("CSV Destination:", s=16, justification="r"), sg.I(key="-CSV_DEST-"), sg.FolderBrowse()],
+        [sg.Exit(button_color="tomato"), sg.B("Settings"), sg.B("Download RSS"), sg.B("Download Podcasts"), sg.B("Convert To CSV")]
     ]
 
     window_title = settings["GUI"]["title"]
-    window = sg.Window(window_title, layout)
-
+    window = sg.Window(window_title, layout, use_custom_titlebar=True) 
     # Keep reading the window's values, until an Exit event is found or the window is closed
     while True: 
         event, values = window.read() #get values and events from the GUI
@@ -203,7 +197,7 @@ def main_window():
         
         if event == "About":
             window.disappear() #hide the main window
-            sg.popup("Version: " + settings["About"]["version"], "Author: " + settings["About"]["author"], "Organization: " + settings["About"]["organization"], "Functionality: " + "Download RSS feeds & mp3 podcast files\n\t\t       Convert RSS to CSV format") #popup window
+            sg.popup("Version: " + settings["About"]["version"], "Author: " + settings["About"]["author"], "Organization: " + settings["About"]["organization"], "Functionality: " + settings["About"]["functionality"]) #popup window
             window.reappear()
             
         if event == "Settings":
