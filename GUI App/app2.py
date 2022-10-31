@@ -1,6 +1,8 @@
-from ast import main
+# from ast import main
 from pathlib import Path
-from turtle import down
+# from pydoc import text
+# from tkinter import Text
+# from turtle import down
 
 import PySimpleGUI as sg 
 import pandas as pd
@@ -15,11 +17,13 @@ import os
 #------------------RSS LINK------------------#
 
 #NOTE: all we need to do is change the some itune tags in the xml file to simplier tags so that it can read easily
+#NOTE: <link> tag is some kind of encoded link, we need to decode it (I think)
+#NOTE: <enclosure> tag might not always be named the same
 def convert_to_csv(wantedTags, xmlFile, csvDest):
-    print("Converting to CSV") #DEBUG
+    print("Converting to CSV file") #DEBUG
     root = open_XML(xmlFile)
     
-    savePath = os.path.join(csvDest, "podcast.csv") #creates a path for the file to be saved
+    savePath = os.path.join(csvDest, "test.csv") #creates a path for the file to be saved
     
     podcast_CSV = open(savePath, 'w', newline='') #opens the file in write mode
     
@@ -28,28 +32,36 @@ def convert_to_csv(wantedTags, xmlFile, csvDest):
     for tag in wantedTags:
         podcast_header.append(tag) 
     csv_writer.writerow(podcast_header)
+
+    # find the number of item tags used for the for loop later
+    numItems = num_of_items(xmlFile)
+
+    print("Number of item tags: " + str(numItems)) #DEBUG
     
-    # count = 0
-    podcast_row = []
-    for tag in wantedTags:
-        for child in root.findall('./channel/item/'):
-            if tag == "enclosure":
-                podcast_row.append(child.attrib.get('url'))
-            if tag.find('duration') != -1:
-                print("found duration")
-                podcast_row.append(child.find("itunes:duration").text)
-            if child.tag == tag:
-                podcast_row.append(child.text)
-    csv_writer.writerow(podcast_row)
-    print("CSV has been created") #DEBUG
+    # loop through all the item tags, one at a time
+    for i in range(numItems): #prevents index out of bound error for the root.findall() function
+        podcast_row = [] #empty every time the loop runs
+        for tag in wantedTags:
+            for child in root.findall('./channel/item[' + str(i+1) + ']/'): #i+1 is the index of the item tag, the first item tag always starts at index 1
+                if child.tag == 'enclosure' and tag == 'enclosure':
+                    podcast_row.append(child.attrib.get('url'))
+                elif child.tag == tag:
+                    podcast_row.append(child.text)
+        csv_writer.writerow(podcast_row)
     podcast_CSV.close()
 
-# def convert_to_csv():
+def num_of_items(xmlFile):
+    root = open_XML(xmlFile)
+    numItems = 0
+    for child in root.findall('./channel/'):
+        if child.tag == 'item':
+            numItems += 1
+    return numItems
+
 def get_tags(xmlFile):
     originalTags = []
     tagsList = []
-    contentList = []
-    
+       
     root = open_XML(xmlFile)
     for i in root.findall('./channel/item/'):
         tag = i.tag
@@ -167,15 +179,15 @@ def main_window():
     
     # GUI Layout
     layout = [
-            #each line in the layout list is a row 
-            #LATER - add placeholder and disappear when clicked
-            [sg.MenubarCustom(menu_def, tearoff=False, key="-MENU-")],
-            [sg.Text("RSS Feed Link:"), sg.Input(key="-RSS_URL-")],
-            [sg.Text("XML File:"), sg.Input(key="-XML_File-"), sg.FileBrowse(file_types=(("XML Files", "*.xml"),))], 
-            [sg.Text("RSS Destination:"), sg.Input(key="-RSS_DEST-"), sg.FolderBrowse()],
-            [sg.Text("Podcast Destination:"), sg.Input(key="-POD_DEST-"), sg.FolderBrowse()],
-            [sg.Text("CSV Destination:"), sg.Input(key="-CSV_DEST-"), sg.FolderBrowse()],
-            [sg.Exit(), sg.Button("Settings"), sg.Button("Download RSS"), sg.Button("Download Podcasts"), sg.Button("Convert To CSV")]    
+        #each line in the layout list is a row separated by commas 
+        #LATER - add placeholder and disappear when clicked
+        [sg.MenubarCustom(menu_def, tearoff=False, key="-MENU-")],
+        [sg.Text("RSS Feed Link:"), sg.Input(key="-RSS_URL-")],
+        [sg.Text("XML File:"), sg.Input(key="-XML_File-"), sg.FileBrowse(file_types=(("XML Files", "*.xml"),))], 
+        [sg.Text("RSS Destination:"), sg.Input(key="-RSS_DEST-"), sg.FolderBrowse()],
+        [sg.Text("Podcast Destination:"), sg.Input(key="-POD_DEST-"), sg.FolderBrowse()],
+        [sg.Text("CSV Destination:"), sg.Input(key="-CSV_DEST-"), sg.FolderBrowse()],
+        [sg.Exit(), sg.Button("Settings"), sg.Button("Download RSS"), sg.Button("Download Podcasts"), sg.Button("Convert To CSV"), sg.Button("Open CSV")]  
     ]
 
     window_title = settings["GUI"]["title"]
@@ -216,19 +228,15 @@ def main_window():
         if event == "Convert To CSV":
             if not is_valid_path(values["-XML_File-"]):
                 sg.popup("Please enter a VALID file path for the location of the XML file")
-            # elif not is_valid_path(values["-CSV_DEST-"]):
-            #     sg.popup("Please enter a VALID file path for storing the CSV file")
+            elif not is_valid_path(values["-CSV_DEST-"]):
+                sg.popup("Please enter a VALID file path for storing the CSV file")
             else:
                 list = get_tags(values["-XML_File-"])
                 select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"])
-                
-            # print("Converting To CSV") #DEBUG
-            
+         
     window.close() 
     
 if __name__ == "__main__":
-    #In the future, the config file will be in the root directory
-    #in that case, use SETTINGS_PATH = Path.cwd()
     SETTINGS_PATH = Path.cwd() #gets the current working directory
     
     #Create the settings object and use ini format
