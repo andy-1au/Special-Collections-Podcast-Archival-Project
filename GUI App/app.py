@@ -1,7 +1,6 @@
 from cProfile import label
 from ctypes import sizeof
-from tkinter.tix import ButtonBox
-from functions import *
+from re import T
 import tkinter as tk #for GUI
 from tkinter import Frame, Label, filedialog, Text, CENTER
 from tkinter import ttk
@@ -17,37 +16,25 @@ import csv
 #https://feeds.captivate.fm/gogetters/
 #------------------RSS LINK------------------#
 
-#------------------Multi-Threading------------------#
-# class async_Download(Thread):
-#     def __init__(self, url):
-#         super().__init__()
-#         self.html = None
-#         self.url = url
-
-#     def run(self):
-#         response = requests.get(self.url)
-#         self.html = response.text
-#------------------Multi-Threading------------------#
-
 # Script for downloading podcasts(mp3) using rss feed(xml) tags, takes in the path to the rss feed
-
 def get_Tags():
     tagsList = []
-    attribList = []
-    textList = []
+    contentList = []
+
     xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
     root = open_XML(xmlPath)
     for i in root.findall('./channel/item/'):
         tag = i.tag
-        attrib = i.attrib
-        text = i.text
-        tagsList.append(tag)
-        if text != None:
-            textList.append(text)
-        
-    # print(tagsList)
-    # print(textList)
-    return tagsList, textList
+        # some tags have {} in them with contents, remove it and replace it with 'itunes'
+        if tag.find('{') != -1:
+            tag = tag.replace(tag[1:tag.find('}')], 'itunes')
+        # add the tag to the list
+        if tag not in tagsList:
+            tagsList.append(tag)
+
+    print(tagsList)
+    return tagsList
+
 
 
 def open_XML(xmlFile):
@@ -82,8 +69,9 @@ def podcast_Folder():
     pdPathLabel.pack()
     print(podcastFolderPath)
     return podcastFolderPath
-
-#asks user to select the RSS xml file and save the path 
+ 
+#asks user to select the RSS xml file and save the path
+#remove this later  
 def select_RSS_Feed():
     xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
     # Create a label to display the path of the rss feed
@@ -126,87 +114,50 @@ def print_To_GUI(text):
     outputBox.insert("end", text + "")
     root.update()
 
+    
+
 root = tk.Tk() # holds the entire app
+#make the app open in a bigger window
+root.geometry("800x600")
 root.title("Podcast Downloader")
 root.geometry("500x500")
 
-#------------------Working On Styling------------------
-# #Add some styling to the app
-# style = ttk.Style()
-# style.configure("Treeview",
-#     background = "silver",
-#     foreground = "black",
-#     rowheight = 25,
-#     fieldbackground = "silver")
-
-# style.map('Treeview',
-#     background = [('selected', 'blue')]) 
-
-# my_tree = ttk.Treeview(root)
-#------------------Working On Styling------------------
-#attach the canvas to the root
-frame = tk.Frame(root, bg="black") #pack the canvas to the root so it can be seen
-frame.pack()
-
-# frame = tk.Frame(root, bg="black") #create a frame
-# frame.place(relwidth=0.8, relheight=0.8, relx=0.1, rely=0.1) #place the frame in the root
-
-# ----------------- Entry Section -----------------
-# make an entry box for rss feed, add a float label in the entry box
-enterRSS = tk.Entry(frame, width=20, borderwidth=5, bg="black", fg="white")
-
-# ----------------- Entry Section -----------------
-
-# ----------------- Text Box Section -----------------
-# make a text box for terminal output
-outputBox = tk.Text(frame, height=25, width=50, borderwidth=5, bg="black")
-outputBox.pack(fill="both", expand=True, side="bottom")
-# ----------------- Text Box Section -----------------
-
-# ----------------- Object -----------------
-obj = functions(root, enterRSS, outputBox) # create an object of the functions class
-# ----------------- Object -----------------
-
 # --------------  Buttons Section ----------------- 
 #Select RSS Feed from File Button
-tk.Button(frame, text="Select RSS Feed", padx=10, pady=5, fg="white", bg="black", command=obj.select_RSS_Feed).pack(side="top", fill="both", expand=True)
+#Create a section and style it just for the buttons, make it a frame on the left side of the window
+buttonFrame = tk.Frame(root, bg="black")
+buttonFrame.pack(side="left", fill="both", expand=False)
 
-# Submit RSS Feed butt
-tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="black", command=obj.get_RSS_Entry).pack(side="top", fill="both", expand=True)
+#Create a button to select the RSS feed from a file
+selectRSSButton = tk.Button(buttonFrame, text="Select RSS Feed", command=select_RSS_Feed).pack()
 
-# Get Tags Button
-tk.Button(frame, text="Get Tags", padx=10, pady=5, fg="white", bg="black", command=obj.get_Tags).pack(side="top", fill="both", expand=True)
+#Create a button to submit the RSS feed url
+submitRSSButton = tk.Button(buttonFrame, text="Submit RSS Feed", command=get_RSS_Entry).pack()
+
+#Create a button to get the tags and text from the RSS feed
+getTagsButton = tk.Button(buttonFrame, text="Get Tags", command=get_Tags).pack()
 
 
-# Quit button
-tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="black", command=root.destroy).pack(side="bottom", fill="both", expand=True)
-# --------------  Buttons Section ----------------- 
+#Create a button to quit the app, put this button on the bottom of the button frame
+quitButton = tk.Button(buttonFrame, text="Quit", command=root.quit).pack(side="bottom")
 
-#Create labels matching the selection of tags
-#create a label and pack those label next to each other in a 2 by 2 grid
-label1 = tk.Label(frame, text="Title", bg="black", fg="white").pack(side="top", fill=00, expand=True)
-frame1 = tk.Frame(frame, bg="black")
-tk.Label(frame1, text="Title", bg="black", fg="white").grid(row=0, column=0)
+# --------------  Entry Section -----------------
+#Create a section and style it just for the entry box, make it a frame on the right side of the window
+entryFrame = tk.Frame(root, bg="black")
+entryFrame.pack(side="right", fill="both", expand=False)
 
-# pack t
-# tk.Label(frame, text="Title", bg="black", fg="white").pack(side="top", expand=True)
+#Create an entry box for the RSS feed url
+enterRSS = tk.Entry(entryFrame, width=50)
+enterRSS.insert(0, "Enter RSS Feed URL")
+enterRSS.bind("<Button-1>", remove_PH)
+enterRSS.pack()
 
-# tk.Label(frame, text="Description", bg="black", fg="white").pack(side="top", expand=True)
+#put a terminal output box right below the entry box
+outputBox = tk.Text(entryFrame, height=48, width=50).pack()
 
-# tk.Label(frame, text="Link", bg="black", fg="white").pack(side="top", expand=True)
+labelFrame = tk.Frame(root, bg="blue")
+labelFrame.pack(side="top", fill="both", expand=True)
 
-# tk.Label(frame, text="PubDate", bg="black", fg="white").pack(side="top", expand=True)
-
-# tk.Label(frame, text="Duration", bg="black", fg="white").pack(side="top", expand=True)
-
-# tk.Label(frame, text="Enclosure", bg="black", fg="white").pack(side="top", expand=True)
-
-# tk.Label(frame, text="Season", bg="black", fg="white").pack(side="top", expand=True)
-
-# tk.Label(frame, text="Episode", bg="black", fg="white").pack(side="top", expand=True)
-
-# Submit RSS Feed butt
-tk.Button(frame, text="Submit RSS Feed", padx=10, pady=5, fg="white", bg="black", command=obj.get_RSS_Entry).pack(side="top", fill="both", expand=True)
 
 # Quit button
 tk.Button(frame, text="Quit", padx=10, pady=5, fg="white", bg="black", command=root.destroy).pack(side="bottom", fill="both", expand=True)
