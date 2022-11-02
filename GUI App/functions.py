@@ -20,7 +20,7 @@ class functions:
         self.enterRSS = enterRSS
         self.outputBox = outputBox
         
-    def openXML(xmlFile):
+    def open_XML(xmlFile):
         tree = XET.parse(xmlFile)
         root = tree.getroot()
         return root
@@ -83,7 +83,7 @@ class functions:
         self.download_PD(rssPath) # Use the path of RSS feed for download podcast function
 
     # function to download the rss feed from the url and return the path to the downloaded rss feed
-    def downloadRSS(self, entry, xmlPath):
+    def download_RSS(self, entry, xmlPath):
         response = requests.get(entry, allow_redirects=True)
         rssPath = os.path.join(xmlPath, "rss.xml")
         open(rssPath, 'wb').write(response.content) #writes the content of the rss feed to a specified file named podcast.xml
@@ -91,8 +91,26 @@ class functions:
         return rssPath 
 
     # make a function to print terminal output to the GUI textbox
-    def printToGUI(self, text):
+    def print_To_GUI(self, text):
         print(text) # DEBUG     
         self.outputBox.insert("end", text + "")
         self.root.update()
+        
+    def get_Tags(self):
+        tagsList = []
+        attribList = []
+        textList = []
+        xmlPath = filedialog.askopenfilename(initialdir="/", title="Select Your RSS File", filetypes=(("xml files", "*.xml"), ("all files", "*.*")))
+        root = self.open_XML(xmlPath)
+        for i in root.findall('./channel/item/'):
+            tag = i.tag
+            attrib = i.attrib
+            text = i.text
+            tagsList.append(tag)
+            if text != None:
+                textList.append(text)
+        
+        # print(tagsList)
+        # print(textList)
+        return tagsList, textList
 
