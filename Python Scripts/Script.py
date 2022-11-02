@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as XET
-# import pandas as pd 
-# import csv
+import pandas as pd 
+import csv
 import requests
 import os
 
@@ -30,15 +30,18 @@ podcastFolderPath = 'insert your path here'
 for child in root.findall('./channel/item/'): #finds all tags in xml file under the item tag
     tag = child.tag
     if tag == 'enclosure':
-         print(child.attrib.get('url'))
+        url = child.attrib.get('url')
+        if url.find('/'): #finds the last '/' in the url
+            fileName = url.rsplit('/', 1)[1] #gets the file name from the url
+            filePath = os.path.join(podcastFolderPath, fileName) #creates a path for the file to be saved
+        download = requests.get(url, allow_redirects=True) #downloads the file
+        print(url + " has been downloaded") 
+        open(filePath, 'wb').write(download.content) #writes the file to the path
+        
+
+
+         
+        
    
 
-
-
-# for child in root: 
-#     tag = child.tag
-#     print(tag)
-#     if tag == 'enclosure url':
-#         print(child.text)
-    
 
