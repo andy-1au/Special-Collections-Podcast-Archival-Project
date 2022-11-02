@@ -11,8 +11,9 @@ import os #for path manipulation
 #------------------RSS LINK------------------#
 
 #NOTE: all we need to do is change the some itune tags in the xml file to simplier tags so that it can read easily
-#NOTE: <link> tag is some kind of encoded link, we need to decode it (I think)
+#NOTE: <link> tag is some kind of encoded link, we need to decode it (I think), not sure if needed any more
 #NOTE: <enclosure> tag might not always be named the same
+#NOTE: FOR DENNIS, next thing to do is write a script to read through each <item> tag in any CSV files, and replace all of the <itunes:..> tags with <itunes_...>, the script below lets you loop through each index via accessing the index of the <item> list b/c the findall function returns a list of specified <tags> 
 def convert_to_csv(wantedTags, xmlFile, csvDest):
     print("Converting to CSV file") #DEBUG
     root = open_XML(xmlFile)
@@ -197,7 +198,7 @@ def main_window():
         
         if event == "About":
             window.disappear() #hide the main window
-            sg.popup("Version: " + settings["About"]["version"], "Author: " + settings["About"]["author"], "Organization: " + settings["About"]["organization"], "Functionality: " + settings["About"]["functionality"]) #popup window
+            sg.popup("Version: " + "1.0", "Author: " + "Andy Lau", "Organization: " + "Lehigh Library Special Collections", "Functionality: " + "Download RSS feeds & podcasts. Convert RSS to CSV format.") #popup window
             window.reappear()
             
         if event == "Settings":
