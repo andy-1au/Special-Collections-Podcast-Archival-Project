@@ -252,6 +252,9 @@ def main_window():
                     select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"], "pdMetaData")
                 else: 
                     select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"], values["-File_Name-"])
+
+        if event == "Clean XML":
+            sg.popup("Working Progress, please wait for the next update.")
                 
     window.close() 
     
