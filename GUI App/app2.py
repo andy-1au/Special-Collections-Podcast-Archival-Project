@@ -9,7 +9,7 @@ import os #for path manipulation
 #------------------RSS LINK------------------#
 #https://feeds.captivate.fm/gogetters/
 #------------------RSS LINK------------------#
-
+#NOTE: NEVER UNDER ANY REASON SHOULD YOU CREATE A VIRTUAL ENVIRONMENT in ONE DRIVE!
 #NOTE: all we need to do is change the some itune tags in the xml file to simplier tags so that it can read easily
 #NOTE: <link> tag is some kind of encoded link, we need to decode it (I think), not sure if needed any more
 #NOTE: <enclosure> tag might not always be named the same
