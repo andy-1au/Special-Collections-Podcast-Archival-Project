@@ -36,9 +36,9 @@ def convert_to_csv(wantedTags, xmlFile, csvDest):
     # loop through all the item tags, one at a time
     for i in range(numItems): #prevents index out of bound error for the root.findall() function
         podcast_row = [] #empty every time the loop runs
-        for tag in wantedTags:
+        for tag in wantedTags: 
             for child in root.findall('./channel/item[' + str(i+1) + ']/'): #i+1 is the index of the item tag, the first item tag always starts at index 1
-                if child.tag == 'enclosure' and tag == 'enclosure':
+                if child.tag == 'enclosure' and tag == 'enclosure': #if the tag is enclosure, then get the url attribute of the tag
                     podcast_row.append(child.attrib.get('url'))
                 elif child.tag == tag:
                     podcast_row.append(child.text)
@@ -48,7 +48,7 @@ def convert_to_csv(wantedTags, xmlFile, csvDest):
 def num_of_items(xmlFile):
     root = open_XML(xmlFile)
     numItems = 0
-    for child in root.findall('./channel/'):
+    for child in root.findall('./channel/'): #finds all tags in xml file under the channel tag
         if child.tag == 'item':
             numItems += 1
     return numItems
@@ -73,6 +73,7 @@ def get_tags(xmlFile):
     print(tagsList)
     print(originalTags)
     return tagsList
+
 
 def download_RSS(url, rssDest):
     print("Downloading RSS Feed") #DEBUG
