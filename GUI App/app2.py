@@ -14,11 +14,12 @@ import os #for path manipulation
 #NOTE: <link> tag is some kind of encoded link, we need to decode it (I think), not sure if needed any more
 #NOTE: <enclosure> tag might not always be named the same
 #NOTE: FOR DENNIS, next thing to do is write a script to read through each <item> tag in any CSV files, and replace all of the <itunes:..> tags with <itunes_...>, the script below lets you loop through each index via accessing the index of the <item> list b/c the findall function returns a list of specified <tags> 
-def convert_to_csv(wantedTags, xmlFile, csvDest):
+def convert_to_CSV(wantedTags, xmlFile, csvDest, fileName):
     print("Converting to CSV file") #DEBUG
     root = open_XML(xmlFile)
     
-    savePath = os.path.join(csvDest, "test.csv") #creates a path for the file to be saved
+    fileExtension = ".csv"
+    savePath = os.path.join(csvDest, fileName + fileExtension) #creates a path for the file to be saved
     
     podcast_CSV = open(savePath, 'w', newline='') #opens the file in write mode
     
@@ -60,12 +61,9 @@ def get_tags(xmlFile):
     root = open_XML(xmlFile)
     for i in root.findall('./channel/item/'):
         tag = i.tag
-        otag = i.tag
-        if otag not in originalTags:
-            originalTags.append(otag)
         # some tags have {} in them with contents, remove it and replace it with 'itunes'
-        if tag.find('{') != -1:
-            tag = tag.replace(tag[1:tag.find('}')], 'itunes')
+        if tag.find('{') != -1: 
+            tag = tag.replace(tag[1:tag.find('}')], 'itunes_')
         # add the tag to the list
         if tag not in tagsList:
             tagsList.append(tag)
@@ -74,10 +72,11 @@ def get_tags(xmlFile):
     print(originalTags)
     return tagsList
 
-def download_RSS(url, rssDest):
+def download_RSS(url, rssDest, fileName):
     print("Downloading RSS Feed") #DEBUG
     response = requests.get(url, allow_redirects=True)
-    rssPath = os.path.join(rssDest, "rss.xml") #creates a path for the file to be saved
+    fileExtension = ".xml"
+    rssPath = os.path.join(rssDest, fileName + fileExtension) #creates a path for the file to be saved
     open(rssPath, 'wb').write(response.content) #writes the content of the rss feed to a specified file named podcast.xml
     print("RSS Feed has been downloaded")
     return rssPath #not sure if this is needed
@@ -114,7 +113,7 @@ def is_valid_path(filepath):
     else:
         return False
 
-def select_tags_windows(tagsList, xmlFile, csvDest):
+def select_tags_windows(tagsList, xmlFile, csvDest, fileName):
     layout = [] #create empty layout and add to it later
     
     for tag in tagsList:
@@ -140,8 +139,8 @@ def select_tags_windows(tagsList, xmlFile, csvDest):
                 sg.popup("No tags selected")
                 return None
             else:
-                 convert_to_csv(wantedTags, xmlFile, csvDest)
-                 sg.popup("Converting to CSV")
+                convert_to_CSV(wantedTags, xmlFile, csvDest, fileName)
+                sg.popup("Converting to CSV")
             print(wantedTags) #DEBUG
             
 def settings_window():
@@ -164,12 +163,28 @@ def settings_window():
             settings["GUI"]["theme"] = values["-THEME-"]
             print(settings) #DEBUG
             
-            sg.popup_no_titlebar("Settings have been saved")
+            break
+    window.close()
+
+def about_window():
+
+    about_layout = [
+        [sg.T("Version: " + "1.2")], 
+        [sg.T("Author: " + "Andy Lau & Dennis Lam")], 
+        [sg.T("Organization: " + "Lehigh Library Special Collections")],
+        [sg.T("Functionality: " + "Download RSS feeds & podcasts. Convert RSS to CSV format.")],
+        [sg.T("Contact Us For Any Questions: " + "andyolau888@gmail.com | dennislam2003@gmail.com")],
+        [sg.B("Close")]
+    ]
+
+    while True:
+        window = sg.Window("About", about_layout, modal=True, use_custom_titlebar = True)
+        event, values = window.read()
+        if event == sg.WIN_CLOSED or event == "Close":
             break
     window.close()
    
 def main_window():
-    
     # Menu Definition
     menu_def = [["Help", ["About", "Settings", "Exit"]]]
     
@@ -179,11 +194,12 @@ def main_window():
         #LATER - add placeholder and disappear when clicked
         [sg.MenubarCustom(menu_def, tearoff=False, key="-MENU-")],
         [sg.T("RSS Feed Link:", s=16, justification="r"), sg.I(key="-RSS_URL-")],
+        [sg.T("Desired Filename:", s=16, justification="r"), sg.I(key="-File_Name-")],
         [sg.T("XML File:", s=16, justification="r"), sg.I(key="-XML_File-"), sg.FileBrowse(file_types=(("XML Files", "*.xml"),))], 
         [sg.T("RSS Destination:", s=16, justification="r"), sg.I(key="-RSS_DEST-"), sg.FolderBrowse()],
         [sg.T("Podcast Destination:", s=16, justification="r"), sg.I(key="-POD_DEST-"), sg.FolderBrowse()],
         [sg.T("CSV Destination:", s=16, justification="r"), sg.I(key="-CSV_DEST-"), sg.FolderBrowse()],
-        [sg.Exit(button_color="tomato"), sg.B("Settings"), sg.B("Download RSS"), sg.B("Download Podcasts"), sg.B("Convert To CSV")]
+        [sg.Exit(button_color="tomato"), sg.B("Settings"), sg.B("Download RSS"), sg.B("Download Podcasts"), sg.B("Convert To CSV"), sg.B("Clean XML")]
     ]
 
     window_title = settings["GUI"]["title"]
@@ -198,20 +214,24 @@ def main_window():
         
         if event == "About":
             window.disappear() #hide the main window
-            sg.popup("Version: " + "1.0", "Author: " + "Andy Lau", "Organization: " + "Lehigh Library Special Collections", "Functionality: " + "Download RSS feeds & podcasts. Convert RSS to CSV format.") #popup window
+            about_window()
             window.reappear()
             
         if event == "Settings":
             settings_window()
-        
+
         if event == "Download RSS":
             if (values["-RSS_URL-"] == ""):
                 sg.popup("Please enter a RSS Feed Link")        
             elif not is_valid_path(values["-RSS_DEST-"]):
                 sg.popup("Please enter a VALID file path for storing the RSS Feed")
             else:
-                download_RSS(values["-RSS_URL-"], values["-RSS_DEST-"])
-                
+                if (values["-File_Name-"] == ""):
+                    download_RSS(values["-RSS_URL-"], values["-RSS_DEST-"], "podcastRSS")
+                else:
+                    download_RSS(values["-RSS_URL-"], values["-RSS_DEST-"], values["-File_Name-"])
+                sg.popup("Downloading RSS Feed")
+
         if event == "Download Podcasts":
             if not is_valid_path(values["-XML_File-"]):
                 sg.popup("Please enter a VALID file path for the location of the XML file")
@@ -219,6 +239,7 @@ def main_window():
                 sg.popup("Please enter a VALID file path for storing the podcasts")
             else:
                 download_PD(values["-XML_File-"], values["-POD_DEST-"])
+                sg.popup("Downloading Podcasts")
                 
         if event == "Convert To CSV":
             if not is_valid_path(values["-XML_File-"]):
@@ -227,8 +248,11 @@ def main_window():
                 sg.popup("Please enter a VALID file path for storing the CSV file")
             else:
                 list = get_tags(values["-XML_File-"])
-                select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"])
-         
+                if (values["-File_Name-"] == ""):
+                    select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"], "pdMetaData")
+                else: 
+                    select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"], values["-File_Name-"])
+                
     window.close() 
     
 if __name__ == "__main__":
