@@ -25,7 +25,7 @@ def convert_to_csv(wantedTags, xmlFile, csvDest):
     csv_writer = csv.writer(podcast_CSV)
     podcast_header = [] 
     for tag in wantedTags:
-        podcast_header.append(tag) 
+        podcast_header.append(tag)
     csv_writer.writerow(podcast_header)
 
     # find the number of item tags used for the for loop later
