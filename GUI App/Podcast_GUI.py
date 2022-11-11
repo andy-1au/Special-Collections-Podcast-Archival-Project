@@ -2,9 +2,11 @@ from pathlib import Path #for path validation
 
 import PySimpleGUI as sg 
 import xml.etree.ElementTree as XET
+import lxml.etree as ET
 import csv 
-import requests #for downloading the RSS feed
 import os #for path manipulation
+import re #for regex
+import requests #for downloading the RSS feed
 
 #------------------RSS LINK------------------#
 #https://feeds.captivate.fm/gogetters/
@@ -13,7 +15,20 @@ import os #for path manipulation
 #NOTE: all we need to do is change the some itune tags in the xml file to simplier tags so that it can read easily
 #NOTE: <link> tag is some kind of encoded link, we need to decode it (I think), not sure if needed any more
 #NOTE: <enclosure> tag might not always be named the same
-#NOTE: FOR DENNIS, next thing to do is write a script to read through each <item> tag in any CSV files, and replace all of the <itunes:..> tags with <itunes_...>, the script below lets you loop through each index via accessing the index of the <item> list b/c the findall function returns a list of specified <tags> 
+#NOTE: FOR DENNIS, next thing to do is write a script to read through each <item> tag in any CSV files, and replace all of the <itunes:..> tags with <itunes_...>, the script below lets you loop through each index via accessing the index of the <item> list b/c the findall function returns a list of specified <tags>
+
+def format_xml(xmlFile): #formats the file and return a list of all tags excluding the channel tag
+    #for itunes tags only
+    tree = ET.parse(xmlFile) #parse the xml file
+    root = tree.getroot() #get the root of the xml file
+    pattern = re.compile(r'{.*}') #regex pattern to match the namespace
+    for i in root.findall('./channel/item/'):
+        if(pattern.match(i.tag) and 'itunes' in i.tag): #if the tag is an itunes tag'):
+            i.tag = re.sub(r'{.*}', 'itunes_', i.tag) #remove the namespace
+       
+    tree.write(xmlFile, encoding='utf-8', xml_declaration=True) #write the changes to the file
+
+ 
 def convert_to_CSV(wantedTags, xmlFile, csvDest, fileName):
     print("Converting to CSV file") #DEBUG
     root = open_XML(xmlFile)
@@ -150,7 +165,7 @@ def settings_window():
                 [sg.B("Cancel"), sg.B("Save")]   
             ]
     
-    window = sg.Window("Settings", layout, modal=True, use_custom_titlebar = True) #modal makes it so that user can't interact with the main window while the settings window is open
+    window = sg.Window("Settings", layout, modal=True, use_custom_titlebar=True) #modal makes it so that user can't interact with the main window while the settings window is open
     
     while True:
         event, values = window.read()
@@ -203,7 +218,7 @@ def main_window():
     ]
 
     window_title = settings["GUI"]["title"]
-    window = sg.Window(window_title, layout, use_custom_titlebar=True) 
+    window = sg.Window(window_title, layout, use_custom_titlebar=True, keep_on_top=True, finalize=True)
     # Keep reading the window's values, until an Exit event is found or the window is closed
     while True: 
         event, values = window.read() #get values and events from the GUI
@@ -218,7 +233,9 @@ def main_window():
             window.reappear()
             
         if event == "Settings":
+            window.disappear()
             settings_window()
+            window.reappear()
 
         if event == "Download RSS":
             if (values["-RSS_URL-"] == ""):
@@ -248,13 +265,22 @@ def main_window():
                 sg.popup("Please enter a VALID file path for storing the CSV file")
             else:
                 list = get_tags(values["-XML_File-"])
+                
                 if (values["-File_Name-"] == ""):
+                    window.disappear()
                     select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"], "pdMetaData")
+                    window.reappear()
                 else: 
+                    window.disappear()
                     select_tags_windows(list, values["-XML_File-"], values["-CSV_DEST-"], values["-File_Name-"])
+                    window.reappear()
 
         if event == "Clean XML":
-            sg.popup("Working Progress, please wait for the next update.")
+            if not is_valid_path(values["-XML_File-"]):
+                sg.popup("Please enter a VALID file path for the location of the XML file")
+            else:
+                format_xml(values["-XML_File-"])
+                sg.popup("XML file has been cleaned")
                 
     window.close() 
     
