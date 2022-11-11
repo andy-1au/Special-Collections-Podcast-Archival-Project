@@ -2,7 +2,7 @@ app2:
 	cd GUI\ App/; \
 	python3.9 app2.py
 test:
-	python3.9 test.py
+	python3.9 clean.py
 
 deleteXML:
 	cd XML; \

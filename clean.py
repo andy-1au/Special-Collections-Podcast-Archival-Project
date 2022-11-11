@@ -21,11 +21,8 @@ def format_xml(xmlFile): #formats the file and return a list of all tags excludi
     pattern = re.compile(r'{.*}') #regex pattern to match the namespace
     for i in root.findall('./channel/item/'):
         if(pattern.match(i.tag) and 'itunes' in i.tag): #if the tag is an itunes tag'):
-            i.tag = i.tag.replace(pattern.match(i.tag).group(), 'itunes_') #remove the namespace
-            
-            
-            
-            
+            i.tag = re.sub(r'{.*}', 'itunes_', i.tag) #remove the namespace
+        
     tree.write('test.xml', encoding='utf-8', xml_declaration=True) #write the changes to the file
 
 tags = format_xml('rss.xml')
