@@ -16,4 +16,5 @@ The settings will **only** change after you close and re-run the app
 ## Contact Us For Any Questions
 
 Andy Lau - andyolau888@gmail.com
+
 Dennis Lam - del225@lehigh.edu
