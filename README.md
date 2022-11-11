@@ -7,7 +7,7 @@ This repo is for developing the GUI project for the podcast files
 
 ## Tags
 
-For display tags popup, {itunes_}encoded and {itunes_}creator is content:encoded and dc:creator respectively 
+For display tags popup, **{itunes_}encoded** and **{itunes_}creator** are **content:encoded** and **dc:creator** respectively 
 
 ## Settings
 
@@ -16,4 +16,4 @@ The settings will **only** change after you close and re-run the app
 ## Contact Us For Any Questions
 
 Andy Lau - andyolau888@gmail.com <br />
-Dennis Lam - del225@lehigh.edu
+Dennis Lam - del225@lehigh.edugit 
