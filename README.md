@@ -1,7 +1,7 @@
 # Special-Collections-Podcast-GUI-Project
 This repo is for developing the GUI project for the podcast files
 
-##Installing Dependencies
+Installing Dependencies
     
 **pip install** lxml, requests, PySimpleGUI, pathlib (not sure if this is in the stdlib, so install it just in case)
 
