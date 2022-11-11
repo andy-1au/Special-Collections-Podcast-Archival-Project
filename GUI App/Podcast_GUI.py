@@ -180,7 +180,7 @@ def settings_window():
 def about_window():
 
     about_layout = [
-        [sg.T("Version: " + "1.2")], 
+        [sg.T("Version: " + "1.4")], 
         [sg.T("Author: " + "Andy Lau & Dennis Lam")], 
         [sg.T("Organization: " + "Lehigh Library Special Collections")],
         [sg.T("Functionality: " + "Download RSS feeds & podcasts. Convert RSS to CSV format.")],
