@@ -26,4 +26,3 @@ def format_xml(xmlFile): #formats the file and return a list of all tags excludi
     tree.write('test.xml', encoding='utf-8', xml_declaration=True) #write the changes to the file
 
 tags = format_xml('rss.xml')
-# print(tags)
