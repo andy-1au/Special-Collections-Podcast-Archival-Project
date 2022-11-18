@@ -147,11 +147,11 @@ def select_tags_windows(tagsList, xmlFile, csvDest, fileName):
                 if values[tag]: #checks if the tag is checked
                     wantedTags.append(tag)
             if not wantedTags:
-                sg.popup("No tags selected")
+                sg.popup("No tags selected", keep_on_top=True)
                 return None
             else:
                 convert_to_CSV(wantedTags, xmlFile, csvDest, fileName)
-                sg.popup("Converting to CSV")
+                sg.popup("Converting to CSV", keep_on_top=True)
             print(wantedTags) #DEBUG
             
 def settings_window():
@@ -214,7 +214,7 @@ def main_window():
     ]
 
     window_title = settings["GUI"]["title"]
-    window = sg.Window(window_title, layout, use_custom_titlebar=True, keep_on_top=True, finalize=True)
+    window = sg.Window(window_title, layout, use_custom_titlebar=True, keep_on_top=True, finalize=True) #keep_on_top=True not sure if this is always good
 
     # Keep reading the window's values, until an Exit event is found or the window is closed
     while True: 
@@ -236,30 +236,30 @@ def main_window():
 
         if event == "Download RSS":
             if (values["-RSS_URL-"] == ""):
-                sg.popup("Please enter a RSS Feed Link")        
+                sg.popup("Please enter a RSS Feed Link", keep_on_top=True)    
             elif not is_valid_path(values["-RSS_DEST-"]):
-                sg.popup("Please enter a VALID file path for storing the RSS Feed")
+                sg.popup("Please enter a VALID file path for storing the RSS Feed", keep_on_top=True)
             else:
                 if (values["-File_Name-"] == ""):
                     download_RSS(values["-RSS_URL-"], values["-RSS_DEST-"], "podcastRSS")
                 else:
                     download_RSS(values["-RSS_URL-"], values["-RSS_DEST-"], values["-File_Name-"])
-                sg.popup("Downloading RSS Feed")
+                sg.popup("Downloading RSS Feed", keep_on_top=True)
 
         if event == "Download Podcasts":
             if not is_valid_path(values["-XML_File-"]):
-                sg.popup("Please enter a VALID file path for the location of the XML file")
+                sg.popup("Please enter a VALID file path for the location of the XML file", keep_on_top=True)
             elif not is_valid_path(values["-POD_DEST-"]):
-                sg.popup("Please enter a VALID file path for storing the podcasts")
+                sg.popup("Please enter a VALID file path for storing the podcasts", keep_on_top=True)
             else:
                 download_PD(values["-XML_File-"], values["-POD_DEST-"])
-                sg.popup("Downloading Podcasts")
+                sg.popup("Downloading Podcasts", keep_on_top=True)
                 
         if event == "Convert To CSV":
             if not is_valid_path(values["-XML_File-"]):
-                sg.popup("Please enter a VALID file path for the location of the XML file")
+                sg.popup("Please enter a VALID file path for the location of the XML file", keep_on_top=True)
             elif not is_valid_path(values["-CSV_DEST-"]):
-                sg.popup("Please enter a VALID file path for storing the CSV file")
+                sg.popup("Please enter a VALID file path for storing the CSV file", keep_on_top=True)
             else:
                 list = get_tags(values["-XML_File-"])
                 if (values["-File_Name-"] == ""):
@@ -273,10 +273,10 @@ def main_window():
 
         if event == "Clean XML":
             if not is_valid_path(values["-XML_File-"]):
-                sg.popup("Please enter a VALID file path for the location of the XML file")
+                sg.popup("Please enter a VALID file path for the location of the XML file", keep_on_top=True)
             else:
                 format_xml(values["-XML_File-"])
-                sg.popup("XML file has been cleaned")
+                sg.popup("XML file has been cleaned", keep_on_top=True)
 
     window.close() 
     
