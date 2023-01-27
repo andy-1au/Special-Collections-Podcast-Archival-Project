@@ -9,25 +9,30 @@ import os #for path manipulation
 import re #for regex
 import requests #for downloading the RSS feed
 
-
 #------------------RSS LINK------------------#
 #https://feeds.captivate.fm/gogetters/
 #------------------RSS LINK------------------#
 
-def format_xml(xmlFile): #formats the file and return a list of all tags excluding the channel tag
+#Recommend minimizing the window since it is programmed to be a fixed size and to "stay on top"
+
+def format_xml(xmlFile, rssDest, fileName): #formats the file and return a list of all tags excluding the channel tag
     #for itunes tags only
+    print("Cleaning up XML file") #DEBUG
+
+    savePath = os.path.join(rssDest, fileName + ".xml") #creates a path for the file to be saved
+
+    #write the changes to the save path
     tree = ET.parse(xmlFile) #parse the xml file
     root = tree.getroot() #get the root of the xml file
     pattern = re.compile(r'{.*}') #regex pattern to match the namespace
     for i in root.findall('./channel/item/'):
-        if(pattern.match(i.tag) and 'itunes' in i.tag): #if the tag is an itunes tag'):
-            i.tag = re.sub(r'{.*}', 'itunes_', i.tag) #remove the namespace
-       
-    tree.write(xmlFile, encoding='utf-8', xml_declaration=True) #write the changes to the file
+        if(pattern.match(i.tag) and 'itunes' in i.tag):
+            i.tag = re.sub(r'{.*}', 'itunes_', i.tag)
+    tree.write(savePath, encoding='utf-8', xml_declaration=True) #write the changes to the file
 
 def convert_to_CSV(wantedTags, xmlFile, csvDest, fileName):
     print("Converting to CSV file") #DEBUG
-    root = open_XML(xmlFile)
+    root = open_XML(xmlFile) 
     
     fileExtension = ".csv"
     savePath = os.path.join(csvDest, fileName + fileExtension) #creates a path for the file to be saved
@@ -79,8 +84,8 @@ def get_tags(xmlFile):
         if tag not in tagsList:
             tagsList.append(tag)
             
-    print(tagsList)
-    print(originalTags)
+    print("\n" + "NEW TAGS: " + str(tagsList) + "\n") #DEBUG
+    print("\n" + "ORIGINAL TAGS: " + str(originalTags) + "\n") #DEBUG
     return tagsList
 
 def download_RSS(url, rssDest, fileName):
@@ -152,7 +157,7 @@ def select_tags_windows(tagsList, xmlFile, csvDest, fileName):
             else:
                 convert_to_CSV(wantedTags, xmlFile, csvDest, fileName)
                 sg.popup("Converting to CSV", keep_on_top=True)
-            print(wantedTags) #DEBUG
+            print("Selected Tags: " + str(wantedTags)) #DEBUG
             
 def settings_window():
     # dropdown list for theme
@@ -274,9 +279,14 @@ def main_window():
         if event == "Clean XML":
             if not is_valid_path(values["-XML_File-"]):
                 sg.popup("Please enter a VALID file path for the location of the XML file", keep_on_top=True)
+            elif not is_valid_path(values["-RSS_DEST-"]):
+                sg.popup("Please enter a VALID file path for storing the cleaned XML file", keep_on_top=True)
             else:
-                format_xml(values["-XML_File-"])
-                sg.popup("XML file has been cleaned", keep_on_top=True)
+                if (values["-File_Name-"] == ""):
+                    format_xml(values["-XML_File-"], values["-RSS_DEST-"], "cleanedXML")
+                else:
+                    format_xml(values["-XML_File-"], values["-RSS_DEST-"], values["-File_Name-"])
+                    sg.popup("XML file has been cleaned", keep_on_top=True)
 
     window.close() 
     
