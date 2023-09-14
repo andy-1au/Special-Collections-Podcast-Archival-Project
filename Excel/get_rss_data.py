@@ -1,7 +1,7 @@
 import os
 import re
 import requests
-import untangle
+from bs4 import BeautifulSoup
 
 from constants import file_constants as f_const
 
@@ -38,28 +38,131 @@ from constants import file_constants as f_const
 #     print("All podcasts have been downloaded")
 #     download.close()
 #     print("Connection to server has been closed")
-#
-#
-# def open_XML(xmlFile):
-#     tree = XET.parse(xmlFile)
-#     root = tree.getroot()
-#     return root
 
 
-def download_rss(url: str, file_name: str, file_extension: str, save_path: str):
-    print('Downloading RSS Feed')
-    response = requests.get(url, allow_redirects=True)
-    rss_path = os.path.join(save_path, file_name + file_extension)
-    open(rss_path, 'wb').write(response.content)
-    print('RSS feed has been downloaded')
-    return rss_path
+def download_rss(url: str, file_name: str, file_extension: str, save_path: str) -> str:
+    """
+
+    :param url:
+    :param file_name:
+    :param file_extension:
+    :param save_path:
+    :return:
+    """
+    try:
+        print('Downloading RSS Feed')
+        response = requests.get(url, allow_redirects=True)
+        rss_path = os.path.join(save_path, file_name + file_extension)
+
+        print('Writing XML file')
+        open(rss_path, 'wb').write(response.content)
+        print('An XML file has been generated')
+
+        return rss_path
+    except:
+        print('Failed to generate XML file')
+        return ''
+
+
+def get_xml_root(file_path: str) -> BeautifulSoup:
+    """
+
+    :param file_path:
+    :return:
+    """
+    try:
+        print('Reading in XML file')
+        with open(file_path, 'r', encoding='utf-8') as f:
+            xml_content = f.read()
+    except:
+        print('Failed to read in XML file')
+
+    try:
+        print('Parsing XML file')
+        return BeautifulSoup(xml_content, 'xml')
+    except:
+        print('Failed to parse XML file')
+        return None
+
+
+def get_episodes(xml_root: BeautifulSoup) -> list[str]:
+    """
+
+    :param xml_root:
+    :return:
+    """
+    episodes_list = [str]
+    try:
+        print('Finding episodes')
+        episodes = xml_root.find_all('item')
+        for episode in episodes:
+            print(episode.title.text)
+            episodes_list.append(episode.title.text)
+
+        return episodes_list
+    except:
+        print('Failed to find episodes. Error in parsing XML')
+        return []
+
+
+def get_episodes_urls(xml_root: BeautifulSoup) -> list[str]:
+    """
+
+    :param xml_root:
+    :return:
+    """
+    urls: list[str] = []
+    try:
+        print('Finding episodes urls')
+        episodes = xml_root.find_all('item')
+        for episode in episodes:
+            print(episode.enclosure.get('url'))
+            urls.append(episode.enclosure.get('url'))
+
+        return urls
+    except:
+        print('Failed to find episodes url. Error in parsing XML')
+        return []
+
+
+def download_episodes(urls: list[str], save_path: str):
+    """
+
+    :param urls:
+    :param save_path:
+    :return:
+    """
+    # try:
+    print('Downloading episodes')
+    for url in urls:
+        print(url)
+        episode_name = url.split('/')[-1]
+        print(episode_name)
+        file_path = os.path.join(save_path, episode_name)
+        # print(file_path)
+        response = requests.get(url)
+        open(file_path, 'wb').write(response.content)
+        print(f'{episode_name} has been downloaded')
+        response.close()
+    print('All podcasts have been downloaded')
+    print('Connection to server has been closed')
+    # except Exception as e:
+    #     print(e)
 
 
 if __name__ == "__main__":
-    xml_file = download_rss(url=f_const.RSS_URL,
-                            file_name=f_const.RSS_NAME,
-                            file_extension=f_const.RSS_EXTENSION,
-                            save_path=f_const.RSS_PATH)
+    xml_file_path = download_rss(url=f_const.RSS_URL,
+                                 file_name=f_const.RSS_NAME,
+                                 file_extension=f_const.RSS_EXTENSION,
+                                 save_path=f_const.RSS_PATH)
+    print(f'XML is saved at: {xml_file_path}')
+
+    podcast = get_xml_root(file_path=xml_file_path)
+    episodes_urls = get_episodes_urls(xml_root=podcast)
+    # print(episodes_urls)
+    download_episodes(urls=episodes_urls, save_path=f_const.PODCAST_PATH)
+
+    # episodes = get_episodes(xml_root=podcast)
 
     # cleaned_xml_destination = "/path/to/your/cleaned/xml/destination"
     # cleaned_xml_file_name = "cleanedXML"
