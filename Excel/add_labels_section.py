@@ -1,10 +1,12 @@
 from xlsxwriter import Workbook
-import labels_constant as labels_const
-import excel_constants as excel_const
+
+from constants import labels_constant as labels_const
+from constants import excel_constants as excel_const
 
 
 def write_labels(workbook: Workbook) -> Workbook:
     labels_format = workbook.add_format()
+    # labels_format.set_text_wrap()
     labels_format.set_align(excel_const.HEADERS_LABELS_ALIGN_LEFT)
     labels_format.set_bg_color(excel_const.HEADERS_LABELS_BG_COLOR)
 
