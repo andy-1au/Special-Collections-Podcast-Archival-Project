@@ -1,8 +1,8 @@
 import os
-import re
 import requests
 from bs4 import BeautifulSoup
 
+import get_podcast_data
 from constants import file_constants as f_const
 
 
@@ -85,27 +85,28 @@ def get_xml_root(file_path: str) -> BeautifulSoup:
         return None
 
 
-def get_episodes(xml_root: BeautifulSoup) -> list[str]:
+def get_podcast_episodes_file_name(urls: list[str]) -> list[str]:
     """
-
-    :param xml_root:
-    :return:
+    
+    :param urls: 
+    :return: a list of podcast_episodes file name
     """
-    episodes_list = [str]
+    podcast_episode_file_name: list[str] = []
     try:
-        print('Finding episodes')
-        episodes = xml_root.find_all('item')
-        for episode in episodes:
-            print(episode.title.text)
-            episodes_list.append(episode.title.text)
-
-        return episodes_list
+        print('Getting podcast episodes file name')
+        for url in urls:
+            # print(url)
+            podcast_episode_name = url.split('/')[-1]
+            # print(podcast_episode_name)
+            podcast_episode_file_name.append(podcast_episode_name)
+        print('Successfully retrieved a list of podcast episodes file name')
+        return podcast_episode_file_name
     except:
-        print('Failed to find episodes. Error in parsing XML')
+        print('Failed to retrieve a list of podcast episode file name')
         return []
 
 
-def get_episodes_urls(xml_root: BeautifulSoup) -> list[str]:
+def get_podcast_episodes_urls(xml_root: BeautifulSoup) -> list[str]:
     """
 
     :param xml_root:
@@ -113,41 +114,41 @@ def get_episodes_urls(xml_root: BeautifulSoup) -> list[str]:
     """
     urls: list[str] = []
     try:
-        print('Finding episodes urls')
-        episodes = xml_root.find_all('item')
-        for episode in episodes:
-            print(episode.enclosure.get('url'))
-            urls.append(episode.enclosure.get('url'))
+        print('Finding podcast episodes urls')
+        podcast_episodes = xml_root.find_all('item')
+        for podcast_episode in podcast_episodes:
+            print(podcast_episode.enclosure.get('url'))
+            urls.append(podcast_episode.enclosure.get('url'))
 
         return urls
     except:
-        print('Failed to find episodes url. Error in parsing XML')
+        print('Failed to find podcast episodes url. Error in parsing XML')
         return []
 
 
-def download_episodes(urls: list[str], save_path: str):
+def download_podcast_episodes(urls: list[str], save_path: str):
     """
-
-    :param urls:
-    :param save_path:
-    :return:
+    
+    :param urls: 
+    :param save_path: 
+    :return: 
     """
-    # try:
-    print('Downloading episodes')
-    for url in urls:
-        print(url)
-        episode_name = url.split('/')[-1]
-        print(episode_name)
-        file_path = os.path.join(save_path, episode_name)
-        # print(file_path)
-        response = requests.get(url)
-        open(file_path, 'wb').write(response.content)
-        print(f'{episode_name} has been downloaded')
-        response.close()
-    print('All podcasts have been downloaded')
-    print('Connection to server has been closed')
-    # except Exception as e:
-    #     print(e)
+    try:
+        print('Downloading podcast episodes')
+        for url in urls:
+            # print(url)
+            podcast_episode_name = url.split('/')[-1]
+            # print(podcast episode_name)
+            file_path = os.path.join(save_path, podcast_episode_name)
+            # print(file_path)
+            response = requests.get(url)
+            open(file_path, 'wb').write(response.content)
+            print(f'{podcast_episode_name} has been downloaded')
+            response.close()
+        print('All podcasts have been downloaded')
+        print('Connection to server has been closed')
+    except:
+        print('Failed to download podcast episodes')
 
 
 if __name__ == "__main__":
@@ -157,12 +158,16 @@ if __name__ == "__main__":
                                  save_path=f_const.RSS_PATH)
     print(f'XML is saved at: {xml_file_path}')
 
-    podcast = get_xml_root(file_path=xml_file_path)
-    episodes_urls = get_episodes_urls(xml_root=podcast)
-    # print(episodes_urls)
-    download_episodes(urls=episodes_urls, save_path=f_const.PODCAST_PATH)
+    xml_root = get_xml_root(file_path=xml_file_path)
 
-    # episodes = get_episodes(xml_root=podcast)
+    podcast_episodes_urls = get_podcast_episodes_urls(xml_root=xml_root)
+    # download_podcast_episodes(urls=podcast_episodes_urls, save_path=f_const.PODCAST_PATH)
+    podcast_episodes_file_name = get_podcast_episodes_file_name(urls=podcast_episodes_urls)
+
+    podcast_episodes_list = get_podcast_data.get_podcast_data(xml_root=xml_root,
+                                                              episodes_file_name=podcast_episodes_file_name)
+    print(podcast_episodes_list)
+    # get_podcast_data.test(xml_root=xml_root)
 
     # cleaned_xml_destination = "/path/to/your/cleaned/xml/destination"
     # cleaned_xml_file_name = "cleanedXML"
