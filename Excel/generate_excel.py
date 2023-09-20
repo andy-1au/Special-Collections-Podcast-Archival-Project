@@ -7,6 +7,11 @@ from constants import file_constants as f_const
 
 
 def generate_excel(podcast_episodes_list: list[PodcastData]):
+    """
+
+    :param podcast_episodes_list:
+    :return:
+    """
     row_index = 0
     workbook = xlsxwriter.Workbook(f'{f_const.EXCEL_PATH}/{f_const.EXCEL_NAME}{f_const.EXCEL_EXTENSION}')
 

@@ -24,11 +24,8 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
             label = ''
             title = episode.title.text
             creator = episode.creator.text
-            if episode.find('itunes:title') is not None:
-                author_tag = episode.find('itunes:title')
-                contributors = author_tag.text
-            else:
-                contributors = episode.author.text
+            author_tag = episode.find('itunes:title')
+            contributors = author_tag.text if author_tag is not None else episode.author.text
             type = excel_const.TYPE
             genre = excel_const.GENRE
             genre_uri = excel_const.GENRE_URI
@@ -53,15 +50,8 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
             subject_topic = ''
             website = ''
             rights = excel_const.RIGHTS
-            try:
-                volume_number = episode.season.text
-            except:
-                volume_number = ''
-            try:
-                issue_number = episode.episode.text
-            except:
-                issue_number = ''
-            # Note about itunes author
+            volume_number = episode.season.text if episode.season.text is not None else ''
+            issue_number = episode.episode.text if episode.episode.text is not None else ''
 
             podcast_object = PodcastData(parent_object=parent_object, cmodel=cmodel, object_location=object_location,
                                          label=label,
