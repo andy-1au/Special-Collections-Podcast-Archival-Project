@@ -9,9 +9,9 @@ from constants import excel_constants as excel_const
 def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> list[PodcastData]:
     """
     This method gets all metadata needed for the list of podcast objects
-    :param xml_root:
-    :param episodes_file_name:
-    :return:
+    :param xml_root: The xml tree root
+    :param episodes_file_name: The episode file name needed for object_location
+    :return: A list of podcast episodes objects
     """
     podcast_list: list[PodcastData] = []
     try:

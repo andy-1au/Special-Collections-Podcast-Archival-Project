@@ -16,3 +16,8 @@ PUBLISHER: str = 'Lehigh University'
 # Header Label Formats
 HEADERS_LABELS_BG_COLOR: str = '#808080'
 HEADERS_LABELS_ALIGN_LEFT: str = 'left'
+
+# Data Formats
+DATA_FONT_TYPE: str = 'Calibri'
+DATA_FONT_SIZE: int = 11
+DATA_ALIGN_LEFT: str = 'left'
