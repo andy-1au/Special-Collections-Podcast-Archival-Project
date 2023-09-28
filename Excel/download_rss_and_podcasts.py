@@ -2,6 +2,7 @@ import os
 import requests
 from bs4 import BeautifulSoup
 
+import generate_csv
 import generate_excel
 import get_podcast_data
 from constants import file_constants as f_const
@@ -126,9 +127,15 @@ if __name__ == "__main__":
     print(f'XML is saved at: {xml_file_path}')
     xml_root = get_xml_root(file_path=xml_file_path)
     podcast_episodes_urls = get_podcast_episodes_urls(xml_root=xml_root)
-    # download_podcast_episodes(urls=podcast_episodes_urls, save_path=f_const.PODCAST_PATH)
     podcast_episodes_file_name = get_podcast_episodes_file_name(urls=podcast_episodes_urls)
     podcast_episodes_list = get_podcast_data.get_podcast_data(xml_root=xml_root,
                                                               episodes_file_name=podcast_episodes_file_name)
     generate_excel.generate_excel(podcast_episodes_list=podcast_episodes_list)
+    generated_excel_file = f'{f_const.EXCEL_PATH}/{f_const.EXCEL_NAME}{f_const.EXCEL_EXTENSION}'
+    print(generated_excel_file)
 
+    csv_buffer = generate_csv.excel_to_csv(input_excel_file=generated_excel_file)
+    with open(f'{f_const.CSV_PATH}/{f_const.CSV_NAME}{f_const.CSV_EXTENSION}', 'w') as f:
+        f.write(csv_buffer.getvalue())
+
+    # download_podcast_episodes(urls=podcast_episodes_urls, save_path=f_const.PODCAST_PATH)

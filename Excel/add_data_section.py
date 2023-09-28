@@ -6,13 +6,13 @@ from constants import labels_constant as labels_const
 from constants import excel_constants as excel_const
 
 
-def write_podcast_object_data(workbook: Workbook, worksheet: Worksheet, podcast_object_list: list[PodcastData], row_index: int):
+def write_podcast_object_data(workbook: Workbook, podcast_object_list: list[PodcastData], row_index: int):
     """
-    This method writes the podcast episode data into the excel sheet
-    :param workbook:
-    :param podcast_object_list:
-    :param row_index:
-    :return:
+    This method writes the podcast episode data into the Excel sheet
+    :param workbook: To help write the Excel file, for creating and referencing the worksheet
+    :param podcast_object_list: The list of podcasts and their data
+    :param row_index: To keep track of the index
+    :return: None
     """
     internal_row_offset = 0
     try:
@@ -21,6 +21,7 @@ def write_podcast_object_data(workbook: Workbook, worksheet: Worksheet, podcast_
         data_format.set_font_size(excel_const.DATA_FONT_SIZE)
         data_format.set_align(excel_const.DATA_ALIGN_LEFT)
 
+        worksheet = workbook.worksheets()[0]
         print('Writing data to excel sheet')
         for podcast_object in podcast_object_list:
             col = 0
