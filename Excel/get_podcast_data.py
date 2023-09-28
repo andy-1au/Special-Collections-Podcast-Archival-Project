@@ -1,4 +1,5 @@
 from datetime import datetime
+from dateutil import parser
 from bs4 import BeautifulSoup
 
 from podcast_data import PodcastData
@@ -40,7 +41,7 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
             genre_uri = excel_const.GENRE_URI
             try:
                 date_non_formatted_text = episode.pubDate.text
-                date_object = datetime.strptime(date_non_formatted_text, '%a, %d %b %Y %H:%M:%S %z')
+                date_object = parse_and_format_date(date_non_formatted_text)
                 date_created = date_object.strftime('%Y-%m-%d')
                 year = date_object.strftime('%Y')
             except AttributeError:
@@ -100,8 +101,21 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
         print(f'Number of podcasts: {len(podcast_list)}')
         return podcast_list
     except:
-        print('Failed to find episodes. Error in parsing XML')
+        print('Error in parsing XML')
         return []
+
+
+def parse_and_format_date(date_text) -> datetime:
+    """
+    Parse a date text in various formats and return a datetime.datetime object
+    :param date_text: The date text string in various formats
+    :return: A datetime.datetime object representing the parsed date and time or None if parsing fails.
+    """
+    try:
+        date_object = parser.parse(date_text)
+        return date_object
+    except ValueError:
+        return None
 
 
 def test(xml_root: BeautifulSoup):
