@@ -4,8 +4,8 @@ import io
 
 def excel_to_csv(input_excel_file) -> io.StringIO:
     """
-    Converts an Excel file to a CSV file and returns it as a file object.
-    :param input_excel_file: Path to the input Excel file.
+    Converts an XLSX file to a CSV file and returns it as a file object.
+    :param input_excel_file: Path to the input XLSX file.
     :return: io.StringIO: A file-like object containing the CSV data.
     """
     try:

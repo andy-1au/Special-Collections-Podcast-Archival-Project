@@ -21,19 +21,35 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
             parent_object = excel_const.PARENT_OBJECT
             cmodel = excel_const.CMODEL
             object_location = episodes_file_name.pop(0)
-            label = ''
-            title = episode.title.text
-            creator = episode.creator.text
-            author_tag = episode.find('itunes:title')
-            contributors = author_tag.text if author_tag is not None else episode.author.text
+            try:
+                title = episode.title.text
+            except AttributeError:
+                title = ''
+            label = title
+            try:
+                creator = episode.creator.text
+            except AttributeError:
+                creator = ''
+            try:
+                author_tag = episode.find('itunes:title')
+                contributors = author_tag.text if author_tag is not None else episode.author.text
+            except AttributeError:
+                contributors = ''
             type = excel_const.TYPE
             genre = excel_const.GENRE
             genre_uri = excel_const.GENRE_URI
-            date_non_formatted_text = episode.pubDate.text
-            date_object = datetime.strptime(date_non_formatted_text, '%a, %d %b %Y %H:%M:%S %z')
-            date_created = date_object.strftime('%Y-%m-%d')
-            year = date_object.strftime('%Y')
-            season = episode.season.text
+            try:
+                date_non_formatted_text = episode.pubDate.text
+                date_object = datetime.strptime(date_non_formatted_text, '%a, %d %b %Y %H:%M:%S %z')
+                date_created = date_object.strftime('%Y-%m-%d')
+                year = date_object.strftime('%Y')
+            except AttributeError:
+                date_created = ''
+                year = ''
+            try:
+                season = episode.season.text
+            except AttributeError:
+                season = ''
             current_date = datetime.now()
             date_captured = current_date.strftime("%Y-%m-%d")
             publisher = excel_const.PUBLISHER
@@ -42,16 +58,31 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
             format = excel_const.FORMAT
             format_uri = excel_const.FORMAT_URI
             file_format = excel_const.FILE_FORMAT
-            dimensions = episode.duration.text
+            try:
+                dimensions = episode.duration.text
+            except:
+                dimensions = ''
             digital_origin = excel_const.DIGITAL_ORIGIN
-            raw_description = episode.description.text
-            non_formatted_description = BeautifulSoup(raw_description, 'html.parser')
-            description_abstract = non_formatted_description.get_text()
+            try:
+                raw_description = episode.description.text
+                non_formatted_description = BeautifulSoup(raw_description, 'html.parser')
+                description_abstract = non_formatted_description.get_text()
+            except:
+                description_abstract = ''
             subject_topic = ''
             website = ''
-            rights = excel_const.RIGHTS
-            volume_number = episode.season.text if episode.season.text is not None else ''
-            issue_number = episode.episode.text if episode.episode.text is not None else ''
+            try:
+                rights = excel_const.RIGHTS
+            except AttributeError:
+                rights = ''
+            try:
+                volume_number = episode.season.text
+            except AttributeError:
+                volume_number = ''
+            try:
+                issue_number = episode.episode.text
+            except AttributeError:
+                issue_number = ''
 
             podcast_object = PodcastData(parent_object=parent_object, cmodel=cmodel, object_location=object_location,
                                          label=label,

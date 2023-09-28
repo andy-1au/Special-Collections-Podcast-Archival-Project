@@ -8,8 +8,8 @@ from constants import excel_constants as excel_const
 
 def write_podcast_object_data(workbook: Workbook, podcast_object_list: list[PodcastData], row_index: int):
     """
-    This method writes the podcast episode data into the Excel sheet
-    :param workbook: To help write the Excel file, for creating and referencing the worksheet
+    This method writes the podcast episode data into the XLSX sheet
+    :param workbook: To help write the XLSX file, for creating and referencing the worksheet
     :param podcast_object_list: The list of podcasts and their data
     :param row_index: To keep track of the index
     :return: None

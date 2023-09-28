@@ -135,7 +135,7 @@ if __name__ == "__main__":
     print(generated_excel_file)
 
     csv_buffer = generate_csv.excel_to_csv(input_excel_file=generated_excel_file)
-    with open(f'{f_const.CSV_PATH}/{f_const.CSV_NAME}{f_const.CSV_EXTENSION}', 'w') as f:
-        f.write(csv_buffer.getvalue())
+    with open(f'{f_const.CSV_PATH}/{f_const.CSV_NAME}{f_const.CSV_EXTENSION}', 'wb') as f:
+        f.write(csv_buffer.read().encode('utf-8'))
 
-    # download_podcast_episodes(urls=podcast_episodes_urls, save_path=f_const.PODCAST_PATH)
+    download_podcast_episodes(urls=podcast_episodes_urls, save_path=f_const.PODCAST_PATH)

@@ -7,8 +7,8 @@ from constants import excel_constants as excel_const
 
 def write_labels(workbook: Workbook, row_index: int) -> int:
     """
-    This method writes the labels for the podcast schema into the Excel worksheet
-    :param workbook: To help write the Excel file, for creating and referencing the worksheet
+    This method writes the labels for the podcast schema into the XLSX worksheet
+    :param workbook: To help write the XLSX file, for creating and referencing the worksheet
     :param row_index: To keep track of the index
     :return: The row_index
     """

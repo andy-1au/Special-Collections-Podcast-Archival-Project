@@ -1,8 +1,8 @@
 # Folder to clean
-CSV_FOLDER = CSV_Dump
-EXCEL_FOLDER = Excel_Dump
-PODCAST_FOLDER = Podcast_Dump
-XML_FOLDER = XML_Dump
+CSV_FOLDER = CSV
+EXCEL_FOLDER = XLSX
+PODCAST_FOLDER = Podcast
+XML_FOLDER = XML
 
 run:
 	python download_rss_and_podcasts.py
