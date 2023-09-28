@@ -17,7 +17,7 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
     try:
         episodes = xml_root.find_all(xml_const.ITEM)
         for episode in episodes:
-            print('Creating podcast object')
+            # print('Creating podcast object')
             parent_object = excel_const.PARENT_OBJECT
             cmodel = excel_const.CMODEL
             object_location = episodes_file_name.pop(0)
@@ -31,7 +31,7 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
             genre_uri = excel_const.GENRE_URI
             date_non_formatted_text = episode.pubDate.text
             date_object = datetime.strptime(date_non_formatted_text, '%a, %d %b %Y %H:%M:%S %z')
-            date_created = date_object.strftime('%m/%d/%Y')
+            date_created = date_object.strftime('%Y-%m-%d')
             year = date_object.strftime('%Y')
             season = episode.season.text
             current_date = datetime.now()
@@ -64,7 +64,7 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
                                          description_abstract=description_abstract, subject_topic=subject_topic,
                                          website=website, rights=rights, volume_number=volume_number,
                                          issue_number=issue_number)
-            print('Podcast object created')
+            # print('Podcast object created')
             podcast_list.append(podcast_object)
         print(f'Number of podcasts: {len(podcast_list)}')
         return podcast_list

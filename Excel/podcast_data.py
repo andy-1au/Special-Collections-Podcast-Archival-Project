@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass
+@dataclass()
 class PodcastData:
     parent_object: str
     cmodel: str
