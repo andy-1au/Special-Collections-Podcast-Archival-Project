@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from dateutil import parser
 from bs4 import BeautifulSoup
 
@@ -103,6 +103,32 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
     except:
         print('Error in parsing XML')
         return []
+
+
+def filter_episodes_by_date(xml_root: BeautifulSoup, specified_date: str):
+    """
+    This method filters podcast episode URLs based on the specified date
+    :param xml_root: The XML root containing podcast episode data
+    :param specified_date: The date to filter by
+    :return: List of filtered episode URLs
+    """
+    filtered_urls = []
+
+    if specified_date == 'default':
+        specified_date = '2000-01-01'
+
+    # Parse the specified date and make it offset aware for comparison purposes
+    specified_date = datetime.strptime(specified_date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
+
+    for episode in xml_root.find_all('item'):
+        episode_date = parse_and_format_date(episode.pubDate.text).replace(tzinfo=timezone.utc)
+
+        # Check if the episode's publication date is equal to or after the specified date
+        if episode_date >= specified_date:
+            episode_url = episode.enclosure.get('url')
+            filtered_urls.append(episode_url)
+
+    return filtered_urls
 
 
 def parse_and_format_date(date_text) -> datetime:

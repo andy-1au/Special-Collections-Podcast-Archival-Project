@@ -9,7 +9,7 @@ CSV_NAME: str = 'CSV_Data'
 CSV_EXTENSION: str = '.csv'
 
 # RSS Related
-RSS_URL: str = 'https://anchor.fm/s/51b95360/podcast/rss'
+RSS_URL: str = 'https://feeds.captivate.fm/gogetters/'
 RSS_NAME: str = 'Podcast_RSS'
 RSS_PATH: str = 'XML'
 RSS_EXTENSION: str = '.xml'

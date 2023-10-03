@@ -1,5 +1,6 @@
 import os
 import requests
+from datetime import datetime
 from bs4 import BeautifulSoup
 
 import generate_csv
@@ -85,7 +86,7 @@ def get_podcast_episodes_urls(xml_root: BeautifulSoup) -> list[str]:
         print('Finding podcast episodes urls')
         podcast_episodes = xml_root.find_all('item')
         for podcast_episode in podcast_episodes:
-            print(podcast_episode.enclosure.get('url'))
+            # print(podcast_episode.enclosure.get('url'))
             urls.append(podcast_episode.enclosure.get('url'))
 
         return urls
@@ -132,10 +133,15 @@ if __name__ == "__main__":
                                                               episodes_file_name=podcast_episodes_file_name)
     generate_excel.generate_excel(podcast_episodes_list=podcast_episodes_list)
     generated_excel_file = f'{f_const.EXCEL_PATH}/{f_const.EXCEL_NAME}{f_const.EXCEL_EXTENSION}'
-    print(generated_excel_file)
+    print(f'Excel file is saved at: {generated_excel_file}')
 
+    # convert excel to csv
     csv_buffer = generate_csv.excel_to_csv(input_excel_file=generated_excel_file)
     with open(f'{f_const.CSV_PATH}/{f_const.CSV_NAME}{f_const.CSV_EXTENSION}', 'wb') as f:
         f.write(csv_buffer.read().encode('utf-8'))
 
-    download_podcast_episodes(urls=podcast_episodes_urls, save_path=f_const.PODCAST_PATH)
+    # EDIT date here, will change later into cmd line interface
+    specified_date = '2023-05-12'
+
+    filtered_urls = get_podcast_data.filter_episodes_by_date(xml_root=xml_root, specified_date=specified_date)
+    download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)
