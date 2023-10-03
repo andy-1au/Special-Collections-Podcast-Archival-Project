@@ -1,17 +1,15 @@
 from xlsxwriter import Workbook
-from xlsxwriter.workbook import Worksheet
 
 from podcast_data import PodcastData
-from constants import labels_constant as labels_const
 from constants import excel_constants as excel_const
 
 
 def write_podcast_object_data(workbook: Workbook, podcast_object_list: list[PodcastData], row_index: int):
     """
-    This method writes the podcast episode data into the XLSX sheet
-    :param workbook: To help write the XLSX file, for creating and referencing the worksheet
-    :param podcast_object_list: The list of podcasts and their data
-    :param row_index: To keep track of the index
+    Write podcast episode data to an XLSX sheet.
+    :param workbook: Workbook object for creating and referencing the worksheet.
+    :param podcast_object_list: List of PodcastData objects containing podcast episode data.
+    :param row_index: Current row index to keep track of the position in the sheet.
     :return: None
     """
     internal_row_offset = 0
@@ -29,9 +27,6 @@ def write_podcast_object_data(workbook: Workbook, podcast_object_list: list[Podc
                 worksheet.write(row_index + internal_row_offset, col, value, data_format)
                 col += 1
             internal_row_offset += 1
-        print('Successfully writen data to excel sheet')
-    except:
-        print('Failed to write data to excel sheet')
-
-
-
+        print('Successfully written data to excel sheet')
+    except Exception as e:
+        print(f'Failed to write data to excel sheet: {str(e)}')

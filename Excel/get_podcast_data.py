@@ -9,16 +9,15 @@ from constants import excel_constants as excel_const
 
 def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> list[PodcastData]:
     """
-    This method gets all metadata needed for the list of podcast objects
-    :param xml_root: The xml tree root
-    :param episodes_file_name: The episode file name needed for object_location
-    :return: A list of podcast episodes objects
+    Extract podcast episode metadata from an XML root and create a list of PodcastData objects.
+    :param xml_root: The XML root containing podcast episode data.
+    :param episodes_file_name: A list of episode file names needed for object_location.
+    :return: A list of PodcastData objects containing podcast episode metadata.
     """
     podcast_list: list[PodcastData] = []
     try:
         episodes = xml_root.find_all(xml_const.ITEM)
         for episode in episodes:
-            # print('Creating podcast object')
             parent_object = excel_const.PARENT_OBJECT
             cmodel = excel_const.CMODEL
             object_location = episodes_file_name.pop(0)
@@ -96,12 +95,11 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
                                          description_abstract=description_abstract, subject_topic=subject_topic,
                                          website=website, rights=rights, volume_number=volume_number,
                                          issue_number=issue_number)
-            # print('Podcast object created')
             podcast_list.append(podcast_object)
         print(f'Number of podcasts: {len(podcast_list)}')
         return podcast_list
-    except:
-        print('Error in parsing XML')
+    except Exception as e:
+        print(f'Error in parsing XML: {str(e)}')
         return []
 
 
@@ -114,20 +112,23 @@ def filter_episodes_by_date(xml_root: BeautifulSoup, specified_date: str):
     """
     filtered_urls = []
 
-    if specified_date == 'default':
-        specified_date = '2000-01-01'
+    try:
+        if specified_date == 'default':
+            specified_date = '2000-01-01'
 
-    # Parse the specified date and make it offset aware for comparison purposes
-    specified_date = datetime.strptime(specified_date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
-    print(f'Specified Date: {specified_date}')
+        # Parse the specified date and make it offset aware for comparison purposes
+        specified_date = datetime.strptime(specified_date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
+        print(f'Specified Date: {specified_date}')
 
-    for episode in xml_root.find_all('item'):
-        episode_date = parse_and_format_date(episode.pubDate.text).replace(tzinfo=timezone.utc)
+        for episode in xml_root.find_all('item'):
+            episode_date = parse_and_format_date(episode.pubDate.text).replace(tzinfo=timezone.utc)
 
-        # Check if the episode's publication date is equal to or after the specified date
-        if episode_date >= specified_date:
-            episode_url = episode.enclosure.get('url')
-            filtered_urls.append(episode_url)
+            # Check if the episode's publication date is equal to or after the specified date
+            if episode_date >= specified_date:
+                episode_url = episode.enclosure.get('url')
+                filtered_urls.append(episode_url)
+    except Exception as e:
+        print(f'Error in filtering episodes by date: {str(e)}')
 
     return filtered_urls
 

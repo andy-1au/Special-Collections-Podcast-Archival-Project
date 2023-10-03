@@ -1,5 +1,4 @@
 from xlsxwriter import Workbook
-from xlsxwriter.workbook import Worksheet
 
 from constants import labels_constant as labels_const
 from constants import excel_constants as excel_const
@@ -7,10 +6,11 @@ from constants import excel_constants as excel_const
 
 def write_labels(workbook: Workbook, row_index: int) -> int:
     """
-    This method writes the labels for the podcast schema into the XLSX worksheet
-    :param workbook: To help write the XLSX file, for creating and referencing the worksheet
-    :param row_index: To keep track of the index
-    :return: The row_index
+    Write podcast episode labels to an XLSX sheet.
+    :param workbook: Workbook object for creating and referencing the worksheet.
+    :param podcast_object_list: List of PodcastData objects containing podcast episode data.
+    :param row_index: Current row index to keep track of the position in the sheet.
+    :return: None
     """
     internal_row_offset = 0
     try:
@@ -57,7 +57,7 @@ def write_labels(workbook: Workbook, row_index: int) -> int:
 
         internal_row_offset += 1
         print('Successfully writen labels to excel sheet')
-    except:
-        print('Failed to write labels to excel sheet')
+    except Exception as e:
+        print(f'Failed to write data to excel sheet: {str(e)}')
     return row_index + internal_row_offset
 
