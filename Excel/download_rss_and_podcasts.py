@@ -10,54 +10,64 @@ from constants import file_constants as f_const
 
 def download_rss(url: str, file_name: str, file_extension: str, save_path: str) -> str:
     """
-
-    :param url:
-    :param file_name:
-    :param file_extension:
-    :param save_path:
-    :return:
+    Download an RSS feed from the specified URL and save it as an XML file.
+    :param url: The URL of the RSS feed to download.
+    :param file_name: The desired name of the downloaded file (excluding extension).
+    :param file_extension: The file extension for the downloaded file (e.g., '.xml').
+    :param save_path: The directory path where the downloaded file should be saved.
+    :return: The full path of the saved XML file.
     """
     try:
         print('Downloading RSS Feed')
         response = requests.get(url, allow_redirects=True)
         rss_path = os.path.join(save_path, file_name + file_extension)
 
+        if response.status_code == 404:
+            print('RSS Feed not found (404)')
+            return ''
+
+        response.raise_for_status()  # Raise an exception for other HTTP error codes
+
         print('Writing XML file')
         open(rss_path, 'wb').write(response.content)
         print('An XML file has been generated')
 
         return rss_path
-    except:
-        print('Failed to generate XML file')
+    except requests.exceptions.RequestException as e:
+        print(f'Failed to download RSS feed: {str(e)}')
         return ''
 
 
 def get_xml_root(file_path: str) -> BeautifulSoup:
     """
-
-    :param file_path:
-    :return:
+    Parse an XML file and return its root as a BeautifulSoup object.
+    :param file_path: The path to the XML file to be parsed.
+    :return: A BeautifulSoup object representing the root of the XML.
     """
     try:
         print('Reading in XML file')
         with open(file_path, 'r', encoding='utf-8') as f:
             xml_content = f.read()
-    except:
-        print('Failed to read in XML file')
+    except FileNotFoundError:
+        print(f'Error: XML file not found at {file_path}')
+        return None
+    except Exception as e:
+        print(f'Failed to read XML file: {str(e)}')
+        return None
 
     try:
         print('Parsing XML file')
         return BeautifulSoup(xml_content, 'xml')
-    except:
-        print('Failed to parse XML file')
+    except Exception as e:
+        print(f'Failed to parse XML file: {str(e)}')
         return None
 
 
 def get_podcast_episodes_file_name(urls: list[str]) -> list[str]:
     """
-    
-    :param urls: 
-    :return: a list of podcast_episodes file name
+    Extract file names from a list of podcast episode URLs.
+    :param urls: A list of podcast episode URLs.
+    :return: A list of file names extracted from the URLs.
     """
     podcast_episode_file_name: list[str] = []
     try:
@@ -69,54 +79,62 @@ def get_podcast_episodes_file_name(urls: list[str]) -> list[str]:
             podcast_episode_file_name.append(podcast_episode_name)
         print('Successfully retrieved a list of podcast episodes file name')
         return podcast_episode_file_name
-    except:
-        print('Failed to retrieve a list of podcast episode file name')
+    except Exception as e:
+        print(f'Failed to retrieve a list of podcast episode file name: {str(e)}')
         return []
 
 
 def get_podcast_episodes_urls(xml_root: BeautifulSoup) -> list[str]:
     """
-
-    :param xml_root:
-    :return:
+    Extract podcast episode URLs from an XML root.
+    :param xml_root: The BeautifulSoup object representing the root of the XML.
+    :return: A list of podcast episode URLs.
     """
     urls: list[str] = []
     try:
-        print('Finding podcast episodes urls')
+        print('Finding podcast episodes URLs')
         podcast_episodes = xml_root.find_all('item')
         for podcast_episode in podcast_episodes:
-            # print(podcast_episode.enclosure.get('url'))
-            urls.append(podcast_episode.enclosure.get('url'))
+            enclosure = podcast_episode.enclosure
+            if enclosure and 'url' in enclosure.attrs:
+                episode_url = enclosure['url']
+                urls.append(episode_url)
 
+        print(f'Successfully found {len(urls)} podcast episodes URLs')
         return urls
-    except:
-        print('Failed to find podcast episodes url. Error in parsing XML')
+    except Exception as e:
+        print(f'Failed to find podcast episodes URLs: {str(e)}')
         return []
 
 
 def download_podcast_episodes(urls: list[str], save_path: str):
     """
-    
-    :param urls: 
-    :param save_path: 
-    :return: 
+    Download podcast episodes from a list of URLs and save them to the specified path.
+    :param urls: A list of podcast episode URLs.
+    :param save_path: The directory path where the episodes should be saved.
+    :return: None
     """
     try:
         print('Downloading podcast episodes')
         for url in urls:
-            # print(url)
             podcast_episode_name = url.split('/')[-1]
-            # print(podcast episode_name)
             file_path = os.path.join(save_path, podcast_episode_name)
-            # print(file_path)
-            response = requests.get(url)
-            open(file_path, 'wb').write(response.content)
-            print(f'{podcast_episode_name} has been downloaded')
-            response.close()
+
+            try:
+                response = requests.get(url)
+                response.raise_for_status()  # Raise an exception for HTTP errors
+
+                with open(file_path, 'wb') as episode_file:
+                    episode_file.write(response.content)
+
+                print(f'{podcast_episode_name} has been downloaded')
+            except requests.exceptions.RequestException as e:
+                print(f'Failed to download episode {podcast_episode_name}: {str(e)}')
+
         print('All podcasts have been downloaded')
-        print('Connection to server has been closed')
-    except:
-        print('Failed to download podcast episodes')
+        print('Connection to the server has been closed')
+    except Exception as e:
+        print(f'Failed to download podcast episodes: {str(e)}')
 
 
 if __name__ == "__main__":
@@ -124,6 +142,7 @@ if __name__ == "__main__":
                                  file_name=f_const.RSS_NAME,
                                  file_extension=f_const.RSS_EXTENSION,
                                  save_path=f_const.RSS_PATH)
+    # xml_file_path = 'XML\\Podcast_RSS.xml'
     print(f'XML is saved at: {xml_file_path}')
     xml_root = get_xml_root(file_path=xml_file_path)
     podcast_episodes_urls = get_podcast_episodes_urls(xml_root=xml_root)
@@ -140,7 +159,7 @@ if __name__ == "__main__":
         f.write(csv_buffer.read().encode('utf-8'))
 
     # EDIT date here, will change later into cmd line interface
-    specified_date = '2023-05-12'
+    specified_date = 'default'
 
     filtered_urls = get_podcast_data.filter_episodes_by_date(xml_root=xml_root, specified_date=specified_date)
     download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)

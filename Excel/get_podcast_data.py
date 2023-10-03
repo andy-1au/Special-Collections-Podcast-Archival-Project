@@ -119,6 +119,7 @@ def filter_episodes_by_date(xml_root: BeautifulSoup, specified_date: str):
 
     # Parse the specified date and make it offset aware for comparison purposes
     specified_date = datetime.strptime(specified_date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
+    print(f'Specified Date: {specified_date}')
 
     for episode in xml_root.find_all('item'):
         episode_date = parse_and_format_date(episode.pubDate.text).replace(tzinfo=timezone.utc)
