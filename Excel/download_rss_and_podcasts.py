@@ -245,9 +245,12 @@ if __name__ == "__main__":
             download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)
             display_cli_section_lines()
 
-        if user_choice == 5:
+        elif user_choice == 2:
+            print('implement later')
+        elif user_choice == 3:
+            print('implement later')
+        elif user_choice == 4:
+            print('implement later')
+        elif user_choice == 5:
             print('Thanks for using the Podcast Archival CLI Tool')
             sys.exit()
-
-
-    # EDIT date here, will change later into cmd line interface
