@@ -96,29 +96,32 @@ def get_podcast_data(xml_root: BeautifulSoup, episodes_file_name: list[str]) -> 
                                          website=website, rights=rights, volume_number=volume_number,
                                          issue_number=issue_number)
             podcast_list.append(podcast_object)
-        print(f'Number of podcasts: {len(podcast_list)}')
+        # print(f'Number of podcasts: {len(podcast_list)}')
         return podcast_list
     except Exception as e:
         print(f'Error in parsing XML: {str(e)}')
         return []
 
 
-def filter_episodes_by_date(xml_root: BeautifulSoup, specified_date: str):
+def filter_episodes_by_date(xml_root: BeautifulSoup):
     """
     This method filters podcast episode URLs based on the specified date
     :param xml_root: The XML root containing podcast episode data
-    :param specified_date: The date to filter by
     :return: List of filtered episode URLs
     """
     filtered_urls = []
-
     try:
-        if specified_date == 'default':
-            specified_date = '2000-01-01'
-
-        # Parse the specified date and make it offset aware for comparison purposes
-        specified_date = datetime.strptime(specified_date, '%Y-%m-%d').replace(tzinfo=timezone.utc)
-        print(f'Specified Date: {specified_date}')
+        while True:
+            date_str = input("Enter a start date for downloading podcasts (YYYY-MM-DD) or type 'default' to download all podcasts: ")
+            try:
+                if date_str == 'default':
+                    date_str = '2000-01-01'
+                # Parse the specified date and make it offset aware for comparison purposes
+                specified_date = datetime.strptime(date_str, '%Y-%m-%d').replace(tzinfo=timezone.utc)
+                print(f'Specified Date: {specified_date}')
+                break
+            except ValueError:
+                print("Invalid date format. Please use the format YYYY-MM-DD.")
 
         for episode in xml_root.find_all('item'):
             episode_date = parse_and_format_date(episode.pubDate.text).replace(tzinfo=timezone.utc)

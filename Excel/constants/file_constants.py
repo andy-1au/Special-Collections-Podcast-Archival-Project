@@ -9,7 +9,7 @@ CSV_NAME: str = 'CSV_Data'
 CSV_EXTENSION: str = '.csv'
 
 # RSS Related
-RSS_URL: str = 'https://feed.podbean.com/thespotcastpodcast/feed.xml'
+RSS_URL: str = 'https://feeds.captivate.fm/gogetters/'
 RSS_NAME: str = 'Podcast_RSS'
 RSS_PATH: str = 'XML'
 RSS_EXTENSION: str = '.xml'
