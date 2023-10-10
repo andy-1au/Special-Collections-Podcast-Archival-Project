@@ -246,7 +246,20 @@ if __name__ == "__main__":
             display_cli_section_lines()
 
         elif user_choice == 2:
-            print('implement later')
+            print('You have selected Download Podcasts and CSV')
+            url = enter_valid_rss_link()
+            xml_file_path = download_rss(url=url,
+                                         file_name=f_const.RSS_NAME,
+                                         file_extension=f_const.RSS_EXTENSION,
+                                         save_path=f_const.RSS_PATH)
+            print(f'The XML file is saved at: {xml_file_path}')
+            display_cli_section_lines()
+
+            xml_root = get_xml_root(file_path=xml_file_path)
+
+            filtered_urls = get_podcast_data.filter_episodes_by_date(xml_root=xml_root)
+            download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)
+            display_cli_section_lines()
         elif user_choice == 3:
             print('implement later')
         elif user_choice == 4:
