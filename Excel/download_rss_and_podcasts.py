@@ -213,7 +213,6 @@ if __name__ == "__main__":
         display_menu()
         display_cli_section_lines()
         user_choice = get_user_choice()
-
         if user_choice == 1:
             print('You have selected Download Podcasts and CSV')
             url = enter_valid_rss_link()
