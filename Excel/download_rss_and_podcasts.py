@@ -8,6 +8,7 @@ import generate_csv
 import generate_excel
 import get_podcast_data
 from constants import file_constants as f_const
+from constants import xml_constants as xml_const
 
 
 def download_rss(url: str, file_name: str, file_extension: str, save_path: str) -> str:
@@ -244,9 +245,8 @@ if __name__ == "__main__":
             filtered_urls = get_podcast_data.filter_episodes_by_date(xml_root=xml_root)
             download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)
             display_cli_section_lines()
-
         elif user_choice == 2:
-            print('You have selected Download Podcasts and CSV')
+            print('You have selected Download ONLY Podcasts')
             url = enter_valid_rss_link()
             xml_file_path = download_rss(url=url,
                                          file_name=f_const.RSS_NAME,
@@ -261,9 +261,48 @@ if __name__ == "__main__":
             download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)
             display_cli_section_lines()
         elif user_choice == 3:
-            print('implement later')
+            print('You have selected Download ONLY CSV')
+            url = enter_valid_rss_link()
+            xml_file_path = download_rss(url=url,
+                                         file_name=f_const.RSS_NAME,
+                                         file_extension=f_const.RSS_EXTENSION,
+                                         save_path=f_const.RSS_PATH)
+            print(f'The XML file is saved at: {xml_file_path}')
+            display_cli_section_lines()
+
+            xml_root = get_xml_root(file_path=xml_file_path)
+            podcast_episodes_urls = get_podcast_episodes_urls(xml_root=xml_root)
+            podcast_episodes_file_name = get_podcast_episodes_file_name(urls=podcast_episodes_urls)
+            display_cli_section_lines()
+
+            podcast_episodes_list = get_podcast_data.get_podcast_data(xml_root=xml_root,
+                                                                      episodes_file_name=podcast_episodes_file_name)
+            generate_excel.generate_excel(podcast_episodes_list=podcast_episodes_list)
+            generated_excel_file = f'{f_const.EXCEL_PATH}/{f_const.EXCEL_NAME}{f_const.EXCEL_EXTENSION}'
+            print(f'The excel file is saved at: {generated_excel_file}')
+            display_cli_section_lines()
+
+            csv_buffer = generate_csv.excel_to_csv(input_excel_file=generated_excel_file)
+            with open(f'{f_const.CSV_PATH}/{f_const.CSV_NAME}{f_const.CSV_EXTENSION}', 'wb') as f:
+                f.write(csv_buffer.read().encode('utf-8'))
+            print(f'The CSV file is saved at: {f_const.CSV_PATH}/{f_const.CSV_NAME}{f_const.CSV_EXTENSION}')
+            display_cli_section_lines()
         elif user_choice == 4:
-            print('implement later')
+            print('You have selected Check Number of Podcasts')
+            url = enter_valid_rss_link()
+            xml_file_path = download_rss(url=url,
+                                         file_name=f_const.RSS_NAME,
+                                         file_extension=f_const.RSS_EXTENSION,
+                                         save_path=f_const.RSS_PATH)
+            # print(f'The XML file is saved at: {xml_file_path}')
+            display_cli_section_lines()
+            xml_root = get_xml_root(file_path=xml_file_path)
+            num_podcasts = xml_root.find_all(xml_const.ITEM)
+            print(f'There are {len(num_podcasts)} podcasts')
+            # print(f'Removing the downloaded XML file at {xml_file_path}')
+            os.remove(xml_file_path)
+            # print(f'THe XML file at {xml_file_path} has been removed')
+            display_cli_section_lines()
         elif user_choice == 5:
             print('Thanks for using the Podcast Archival CLI Tool')
             sys.exit()
