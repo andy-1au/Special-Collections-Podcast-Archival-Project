@@ -21,7 +21,7 @@ cd CLI
 ```
 Install the required Python libraries using pip: 
 ```commandline
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Usage
