@@ -13,7 +13,7 @@ Before using the Podcast Archival CLI Tool, make sure you have the following pre
 ## Installation 
 Clone the repository or download the source code to your local machine.
 ```commandline
-git clone https://github.com/andy-1au/Special-Collections-Podcast-GUI-Project.git
+git clone https://github.com/andy-1au/Special-Collections-Podcast-Archival-Project.git
 ```
 Navigate to the project directory:
 ```commandline
@@ -54,10 +54,10 @@ Option 5 exits the tool.
 
 ## Contributing
 If you want to contribute to the Podcast Archival CLI Tool, feel free to submit issues, suggestions, or pull 
-requests on the [GitHub repository](https://github.com/andy-1au/Special-Collections-Podcast-GUI-Project).
+requests on the [GitHub repository](https://github.com/andy-1au/Special-Collections-Podcast-Archival-Project).
 
 ## License 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/andy-1au/Special-Collections-Podcast-GUI-Project/blob/main/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/andy-1au/Special-Collections-Podcast-Archival-Project/blob/main/LICENSE) file for details.
 
 ## Author
 Andy Lau - andyolau888@gmail.com
