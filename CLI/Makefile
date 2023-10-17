@@ -9,7 +9,10 @@ run: prepare_folders
 
 prepare_folders:
 	@echo "Creating required directories if they don't exist..."
-	mkdir -p CSV Podcast XLSX XML
+	mkdir -p CSV
+	mkdir -p Podcast
+	mkdir -p XLSX
+	mkdir -p XML
 	@echo "Directories created or already exist."
 
 clean_all: clean_csv clean_excel clean_podcast clean_xml
