@@ -9,6 +9,7 @@ Before using the Podcast Archival CLI Tool, make sure you have the following pre
 - Required Python libraries (install them using pip): 
   
   - ```pip install requirements.txt```
+- Please make sure that you run the CLI in git bash
 
 ## Installation 
 Clone the repository or download the source code to your local machine.
