@@ -147,12 +147,3 @@ def parse_and_format_date(date_text) -> datetime:
         return date_object
     except ValueError:
         return None
-
-
-def test(xml_root: BeautifulSoup):
-    episodes = xml_root.find_all(xml_const.ITEM)
-
-    for episode in episodes:
-        author_tag = episode.find('itunes:titless')
-        author = author_tag.text
-        print(author)

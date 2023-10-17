@@ -4,8 +4,13 @@ EXCEL_FOLDER = XLSX
 PODCAST_FOLDER = Podcast
 XML_FOLDER = XML
 
-run:
+run: prepare_folders
 	python download_rss_and_podcasts.py
+
+prepare_folders:
+	@echo "Creating required directories if they don't exist..."
+	mkdir -p CSV Podcast XLSX XML
+	@echo "Directories created or already exist."
 
 clean_all: clean_csv clean_excel clean_podcast clean_xml
 

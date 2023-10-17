@@ -41,7 +41,7 @@ def download_rss(url: str, file_name: str, file_extension: str, save_path: str) 
         return ''
 
 
-def get_xml_root(file_path: str) -> BeautifulSoup:
+def get_xml_root(file_path: str) -> BeautifulSoup | None:
     """
     Parse an XML file and return its root as a BeautifulSoup object.
     :param file_path: The path to the XML file to be parsed.
@@ -143,13 +143,17 @@ def download_podcast_episodes(urls: list[str], save_path: str):
 
 
 def display_cli_section_lines():
+    """
+    Display a section separator in the command line interface.
+    :return: None
+    """
     print('=========================================')
 
 
 def display_menu():
     """
-
-    :return:
+    Display a menu of options in the command line interface.
+    :return: None
     """
     print("Please select an option:")
     print("1. Download Podcasts and CSV")
@@ -161,8 +165,8 @@ def display_menu():
 
 def get_user_choice():
     """
-
-    :return:
+    Get the user's choice by prompting for a number input.
+    :return: The user's choice as an integer.
     """
     while True:
         try:
@@ -177,8 +181,8 @@ def get_user_choice():
 
 def enter_valid_rss_link():
     """
-
-    :return:
+    Prompt the user to enter a valid RSS link and check its validity.
+    :return: A valid RSS link as a string or None if canceled or invalid.
     """
     while True:
         try:
