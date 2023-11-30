@@ -65,5 +65,5 @@ Andy Lau - andyolau888@gmail.com
 
 ## Acknowledgements
 - Alex Japha: Provided valuable project oversight and guidance. 
-- Dennis Lam: Played a key role in the development of the initial version of this tool, particularly in parsing iTunes 
+- Dennis Lam: Helped with the development of the initial version of this tool, particularly in parsing iTunes 
 tags within the RSS feed.
