@@ -1,3 +1,5 @@
+import sys
+
 from datetime import datetime, timezone
 from dateutil import parser
 from bs4 import BeautifulSoup
@@ -112,8 +114,10 @@ def filter_episodes_by_date(xml_root: BeautifulSoup):
     filtered_urls = []
     try:
         while True:
-            date_str = input("Enter a start date for downloading podcasts (YYYY-MM-DD) or type 'default' to download all podcasts: ")
+            date_str = input("Enter a start date for downloading podcasts (YYYY-MM-DD). Type 'default' to download all podcasts. Type 'q' to quit: ")
             try:
+                if date_str.lower() == 'q': 
+                    sys.exit() 
                 if date_str == 'default':
                     date_str = '2000-01-01'
                 # Parse the specified date and make it offset aware for comparison purposes

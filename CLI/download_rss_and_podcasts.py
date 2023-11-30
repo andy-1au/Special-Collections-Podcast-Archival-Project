@@ -1,4 +1,5 @@
 import os
+import glob
 import requests
 import sys
 from bs4 import BeautifulSoup
@@ -190,7 +191,7 @@ def enter_valid_rss_link():
             # Strip whitespace from the input
             user_input = user_input.strip()
 
-            if user_input == 'q':
+            if user_input.lower() == 'q':
                 print('Thanks for using the Podcast Archival CLI :)')
                 sys.exit()
 
@@ -208,6 +209,68 @@ def enter_valid_rss_link():
             return None  # Return None if the user cancels
         except Exception as e:
             print(f'An error occurred: {str(e)}. Please try again.')
+            
+
+def require_xml_file(): 
+    """
+    Prompt the user if they want to download the rss feed or they already have it in the XML folder
+    :return: A boolean value, yes == True, no == False
+    """
+    while True:
+        try:
+            user_input = input("Do you want to download an RSS file via a link?\nEnter 'yes' or 'no' or 'q' to quit: ")
+            # Strip whitespace from the input
+            user_input = user_input.strip()
+
+            if user_input.lower() == 'q':
+                print('Thanks for using the Podcast Archival CLI :)')
+                sys.exit()
+
+            if user_input.lower() == 'yes':
+                return True
+            elif user_input.lower() == 'no':
+                return False 
+            else: 
+                print("Invalid choice. Please enter 'yes' or 'no' or 'q' to quit")
+        except KeyboardInterrupt:
+            print('\nOperation canceled by user.')
+            return None  # Return None if the user cancels
+        except Exception as e:
+            print(f'An error occurred: {str(e)}. Please try again.')
+            
+
+def display_and_choose_xml(folder_path):
+    """
+    Display a list of XML files in the specified folder and let the user choose one
+    :param folder_path (str): The path to the folder containing XML files
+    :return: str or None: The path of the chosen XML file, or None if no file was chosen or if the folder doesn't contain any XML files
+    """
+    # Get a list of XML files in the specified folder
+    xml_files = glob.glob(os.path.join(folder_path, '*.xml'))
+
+    if not xml_files:
+        print(f"No XML files found in {folder_path}")
+        return None
+
+    print(f"Available XML files in {folder_path}:")
+    for i, xml_file in enumerate(xml_files, start=1):
+        print(f"{i}. {os.path.basename(xml_file)}")
+
+    while True:
+        try:
+            # Get user input for choosing a file
+            choice = int(input("Enter the number of the XML file you want to choose (or 0 to exit): "))
+            
+            if choice == 0:
+                sys.exit()
+            elif 1 <= choice <= len(xml_files):
+                chosen_file = xml_files[choice - 1]
+                print(f"You've chosen: {os.path.basename(chosen_file)}")
+                return chosen_file
+            else:
+                print("Invalid choice. Please enter a valid number.")
+        except ValueError:
+            print("Invalid input. Please enter a number.")
 
 
 if __name__ == "__main__":
@@ -219,14 +282,17 @@ if __name__ == "__main__":
         user_choice = get_user_choice()
         if user_choice == 1:
             print('You have selected Download Podcasts and CSV')
-            url = enter_valid_rss_link()
-            xml_file_path = download_rss(url=url,
-                                         file_name=f_const.RSS_NAME,
-                                         file_extension=f_const.RSS_EXTENSION,
-                                         save_path=f_const.RSS_PATH)
-            print(f'The XML file is saved at: {xml_file_path}')
-            display_cli_section_lines()
-
+            if require_xml_file(): 
+                url = enter_valid_rss_link()
+                xml_file_path = download_rss(url=url,
+                                            file_name=f_const.RSS_NAME,
+                                            file_extension=f_const.RSS_EXTENSION,
+                                            save_path=f_const.RSS_PATH)
+                print(f'The XML file is saved at: {xml_file_path}')
+                display_cli_section_lines()
+            else: 
+                xml_file_path = display_and_choose_xml(folder_path=f_const.RSS_PATH)
+                
             xml_root = get_xml_root(file_path=xml_file_path)
             podcast_episodes_urls = get_podcast_episodes_urls(xml_root=xml_root)
             podcast_episodes_file_name = get_podcast_episodes_file_name(urls=podcast_episodes_urls)
@@ -250,28 +316,33 @@ if __name__ == "__main__":
             display_cli_section_lines()
         elif user_choice == 2:
             print('You have selected Download ONLY Podcasts')
-            url = enter_valid_rss_link()
-            xml_file_path = download_rss(url=url,
-                                         file_name=f_const.RSS_NAME,
-                                         file_extension=f_const.RSS_EXTENSION,
-                                         save_path=f_const.RSS_PATH)
-            print(f'The XML file is saved at: {xml_file_path}')
-            display_cli_section_lines()
+            if require_xml_file(): 
+                url = enter_valid_rss_link()
+                xml_file_path = download_rss(url=url,
+                                            file_name=f_const.RSS_NAME,
+                                            file_extension=f_const.RSS_EXTENSION,
+                                            save_path=f_const.RSS_PATH)
+                print(f'The XML file is saved at: {xml_file_path}')
+                display_cli_section_lines()
+            else: 
+                xml_file_path = display_and_choose_xml(folder_path=f_const.RSS_PATH)
 
             xml_root = get_xml_root(file_path=xml_file_path)
-
             filtered_urls = get_podcast_data.filter_episodes_by_date(xml_root=xml_root)
             download_podcast_episodes(urls=filtered_urls, save_path=f_const.PODCAST_PATH)
             display_cli_section_lines()
         elif user_choice == 3:
             print('You have selected Download ONLY CSV')
-            url = enter_valid_rss_link()
-            xml_file_path = download_rss(url=url,
-                                         file_name=f_const.RSS_NAME,
-                                         file_extension=f_const.RSS_EXTENSION,
-                                         save_path=f_const.RSS_PATH)
-            print(f'The XML file is saved at: {xml_file_path}')
-            display_cli_section_lines()
+            if require_xml_file(): 
+                url = enter_valid_rss_link()
+                xml_file_path = download_rss(url=url,
+                                            file_name=f_const.RSS_NAME,
+                                            file_extension=f_const.RSS_EXTENSION,
+                                            save_path=f_const.RSS_PATH)
+                print(f'The XML file is saved at: {xml_file_path}')
+                display_cli_section_lines()
+            else: 
+                xml_file_path = display_and_choose_xml(folder_path=f_const.RSS_PATH)
 
             xml_root = get_xml_root(file_path=xml_file_path)
             podcast_episodes_urls = get_podcast_episodes_urls(xml_root=xml_root)
@@ -292,13 +363,17 @@ if __name__ == "__main__":
             display_cli_section_lines()
         elif user_choice == 4:
             print('You have selected Check Number of Podcasts')
-            url = enter_valid_rss_link()
-            xml_file_path = download_rss(url=url,
-                                         file_name=f_const.RSS_NAME,
-                                         file_extension=f_const.RSS_EXTENSION,
-                                         save_path=f_const.RSS_PATH)
-            # print(f'The XML file is saved at: {xml_file_path}')
-            display_cli_section_lines()
+            if require_xml_file(): 
+                url = enter_valid_rss_link()
+                xml_file_path = download_rss(url=url,
+                                            file_name=f_const.RSS_NAME,
+                                            file_extension=f_const.RSS_EXTENSION,
+                                            save_path=f_const.RSS_PATH)
+                print(f'The XML file is saved at: {xml_file_path}')
+                display_cli_section_lines()
+            else: 
+                xml_file_path = display_and_choose_xml(folder_path=f_const.RSS_PATH)
+                
             xml_root = get_xml_root(file_path=xml_file_path)
             num_podcasts = xml_root.find_all(xml_const.ITEM)
             print(f'There are {len(num_podcasts)} podcasts')
